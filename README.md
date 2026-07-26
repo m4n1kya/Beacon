@@ -617,33 +617,29 @@ Cooling Setpoint
 
 ---
 
-# Screenshots
+## Screenshots
 
-> Replace these placeholders with your actual screenshots.
+### Dashboard Overview
 
-## Dashboard Overview
-
-![Dashboard](D:\Desktop\Vault\PROJECT\eco-loop\screenshots\dashboard.png)
+![Dashboard](screenshots/dashboard.png)
 
 ---
 
-## Energy Comparison Charts
+### Energy Comparison Charts
 
-![Charts](D:\Desktop\Vault\PROJECT\eco-loop\screenshots\charts.png)
-
----
-
-
-## Generated Reports
-
-![Reports](D:\Desktop\Vault\PROJECT\eco-loop\screenshots\report.png)
+![Charts](screenshots/charts.png)
 
 ---
 
-## Terminal Output
+### Generated Reports
 
-![Terminal](D:\Desktop\Vault\PROJECT\eco-loop\screenshots\terminal.png)
+![Reports](screenshots/report.png)
 
+---
+
+### Terminal Output
+
+![Terminal](screenshots/terminal.png)
 ---
 
 # Results
