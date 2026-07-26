@@ -1,0 +1,6 @@
+Metric,Baseline,Optimized
+Outdoor Temperature,25.578812785388127,25.578812785388127
+Building Electricity,257872140000.0,257872140000.0
+Facility Electricity,377653423039.6244,364161184778.8737
+Cooling Setpoint,-,25.0
+Savings %,-,3.57265085859821

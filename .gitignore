@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python cache
+.pytest_cache/
+
+# Streamlit cache
+.streamlit/secrets.toml
+
+# EnergyPlus generated output files
+outputs/*.audit
+outputs/*.bnd
+outputs/*.dbg
+outputs/*.eio
+outputs/*.end
+outputs/*.err
+outputs/*.eso
+outputs/*.mdd
+outputs/*.mtd
+outputs/*.rdd
+outputs/*.shd
+outputs/*.sql
+outputs/*.wrl
+
+# Logs
+*.log
