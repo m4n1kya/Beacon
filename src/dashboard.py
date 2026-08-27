@@ -569,7 +569,7 @@ st.markdown("<hr>", unsafe_allow_html=True)
 # GLOBE VISUALIZATION (HERO SECTION)
 # ---------------------------------------------------
 
-st.plotly_chart(interactive_globe(), use_container_width=True, config={'displayModeBar': False})
+st.plotly_chart(interactive_globe(), use_container_width=True, config={'displayModeBar': False, 'scrollZoom': False})
 
 st.markdown("<hr>", unsafe_allow_html=True)
 

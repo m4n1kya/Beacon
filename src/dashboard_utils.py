@@ -338,11 +338,11 @@ and evaluated the resulting energy performance.
 
 def interactive_globe():
     df = pd.DataFrame({
-        'start_lat': [40.7128, 51.5074, 35.6895, -33.8688, 1.3521, 48.8566, 37.7749],
-        'start_lon': [-74.0060, -0.1278, 139.6917, 151.2093, 103.8198, 2.3522, -122.4194],
-        'end_lat': [51.5074, 35.6895, -33.8688, 1.3521, 40.7128, 40.7128, 35.6895],
-        'end_lon': [-0.1278, 139.6917, 151.2093, 103.8198, -74.0060, -74.0060, 139.6917],
-        'city': ['New York', 'London', 'Tokyo', 'Sydney', 'Singapore', 'Paris', 'San Francisco']
+        \'start_lat\': [40.7128, 51.5074, 35.6895, -33.8688, 1.3521, 48.8566, 37.7749],
+        \'start_lon\': [-74.0060, -0.1278, 139.6917, 151.2093, 103.8198, 2.3522, -122.4194],
+        \'end_lat\': [51.5074, 35.6895, -33.8688, 1.3521, 40.7128, 40.7128, 35.6895],
+        \'end_lon\': [-0.1278, 139.6917, 151.2093, 103.8198, -74.0060, -74.0060, 139.6917],
+        \'city\': [\'New York\', \'London\', \'Tokyo\', \'Sydney\', \'Singapore\', \'Paris\', \'San Francisco\']
     })
 
     fig = go.Figure()
@@ -350,53 +350,82 @@ def interactive_globe():
     for i in range(len(df)):
         fig.add_trace(
             go.Scattergeo(
-                lat=[df['start_lat'][i], df['end_lat'][i]],
-                lon=[df['start_lon'][i], df['end_lon'][i]],
-                mode='lines',
-                line=dict(width=2, color='#6366f1'),
+                lat=[df[\'start_lat\'][i], df[\'end_lat\'][i]],
+                lon=[df[\'start_lon\'][i], df[\'end_lon\'][i]],
+                mode=\'lines\',
+                line=dict(width=2, color=\'#6366f1\'),
                 opacity=0.6,
-                hoverinfo='none'
+                hoverinfo=\'none\'
             )
         )
 
     fig.add_trace(
         go.Scattergeo(
-            lat=df['start_lat'],
-            lon=df['start_lon'],
-            mode='markers+text',
-            text=df['city'],
-            textposition='top center',
-            textfont=dict(color='rgba(255,255,255,0.8)', size=10),
+            lat=df[\'start_lat\'],
+            lon=df[\'start_lon\'],
+            mode=\'markers+text\',
+            text=df[\'city\'],
+            textposition=\'top center\',
+            textfont=dict(color=\'rgba(255,255,255,0.8)\', size=12),
             marker=dict(
-                size=8,
-                color='#818cf8',
-                line=dict(width=1, color='rgba(255, 255, 255, 0.8)'),
-                symbol='circle'
+                size=10,
+                color=\'#818cf8\',
+                line=dict(width=1, color=\'rgba(255, 255, 255, 0.8)\'),
+                symbol=\'circle\'
             ),
-            hoverinfo='text'
+            hoverinfo=\'text\'
         )
     )
 
+    frames = []
+    for lon in range(0, 360, 2):
+        frames.append(go.Frame(layout=dict(geo=dict(projection=dict(rotation=dict(lon=lon))))))
+    fig.frames = frames
+
     fig.update_layout(
+        updatemenus=[
+            dict(
+                type=\'buttons\',
+                showactive=False,
+                y=0.1,
+                x=0.1,
+                xanchor=\'left\',
+                yanchor=\'bottom\',
+                buttons=[
+                    dict(
+                        label=\'Spin\',
+                        method=\'animate\',
+                        args=[None, dict(frame=dict(duration=30, redraw=True), transition=dict(duration=0), fromcurrent=True, mode=\'immediate\')]
+                    ),
+                    dict(
+                        label=\'Stop\',
+                        method=\'animate\',
+                        args=[[None], dict(frame=dict(duration=0, redraw=False), mode=\'immediate\', transition=dict(duration=0))]
+                    )
+                ]
+            )
+        ],
         showlegend=False,
         geo=dict(
-            projection_type='orthographic',
+            projection_type=\'orthographic\',
+            projection_scale=1.4,
             showcoastlines=True,
-            coastlinecolor='rgba(255, 255, 255, 0.1)',
+            coastlinecolor=\'rgba(255, 255, 255, 0.1)\',
             showland=True,
-            landcolor='rgba(20, 20, 35, 1)',
+            landcolor=\'rgba(20, 20, 35, 1)\',
             showocean=True,
-            oceancolor='rgba(10, 10, 20, 1)',
+            oceancolor=\'rgba(10, 10, 20, 1)\',
             showlakes=True,
-            lakecolor='rgba(10, 10, 20, 1)',
+            lakecolor=\'rgba(10, 10, 20, 1)\',
             showcountries=True,
-            countrycolor='rgba(255, 255, 255, 0.1)',
-            bgcolor='rgba(0,0,0,0)'
+            countrycolor=\'rgba(255, 255, 255, 0.1)\',
+            bgcolor=\'rgba(0,0,0,0)\'
         ),
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        margin=dict(l=0, r=0, t=20, b=20),
-        height=500,
+        paper_bgcolor=\'rgba(0,0,0,0)\',
+        plot_bgcolor=\'rgba(0,0,0,0)\',
+        margin=dict(l=0, r=0, t=10, b=10),
+        height=700,
     )
 
     return fig
+
