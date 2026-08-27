@@ -487,12 +487,6 @@ css_style = f"""
 </style>
 """
 
-# Fallback if image not found
-if not bg_image_base64:
-    css_style = css_style.replace(
-        'url("data:image/jpg;base64,{bg_image_base64}")',
-        'radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0f 100%)'
-    )
 
 st.markdown(css_style, unsafe_allow_html=True)
 
