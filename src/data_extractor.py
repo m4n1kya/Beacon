@@ -46,5 +46,34 @@ def get_metrics():
     return metrics
 
 
+import pandas as pd
+
+def get_timeseries_data():
+    conn = sqlite3.connect(DB)
+    
+    # Get temperature timeseries
+    temp_df = pd.read_sql_query("""
+        SELECT rd.TimeIndex, rd.Value as Temperature 
+        FROM ReportData rd 
+        JOIN ReportDataDictionary rdd ON rd.ReportDataDictionaryIndex=rdd.ReportDataDictionaryIndex 
+        WHERE rdd.Name='Site Outdoor Air Drybulb Temperature'
+        ORDER BY rd.TimeIndex
+    """, conn)
+    
+    # Get electricity timeseries
+    elec_df = pd.read_sql_query("""
+        SELECT rd.TimeIndex, rd.Value as Electricity 
+        FROM ReportData rd 
+        JOIN ReportDataDictionary rdd ON rd.ReportDataDictionaryIndex=rdd.ReportDataDictionaryIndex 
+        WHERE rdd.Name='Electricity:Facility'
+        ORDER BY rd.TimeIndex
+    """, conn)
+    
+    conn.close()
+    
+    # Merge on TimeIndex
+    df = pd.merge(temp_df, elec_df, on='TimeIndex')
+    return df
+
 if __name__ == "__main__":
     print(get_metrics())

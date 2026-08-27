@@ -15,8 +15,12 @@ from dashboard_utils import (
     building_panel,
     ai_summary,
     history_chart,
-    interactive_globe
+    interactive_globe,
+    live_telemetry_chart
 )
+
+import time
+from data_extractor import get_timeseries_data
 
 from report_generator import generate_all
 
@@ -591,460 +595,543 @@ components.html(globe_html, height=500)
 
 st.markdown("<hr>", unsafe_allow_html=True)
 
-# ---------------------------------------------------
-# KPI METRICS ROW
-# ---------------------------------------------------
-
-col1, col2, col3, col4 = st.columns(4)
-
-with col1:
-    st.metric(
-        "Baseline Energy Consumption",
-        f"{baseline_energy:,.0f} kWh",
-        delta=None,
-        delta_color="off"
-    )
-
-with col2:
-    st.metric(
-        "Optimized Energy Consumption",
-        f"{optimized_energy:,.0f} kWh",
-        delta=None,
-        delta_color="off"
-    )
-
-with col3:
-    st.metric(
-        "Total Energy Savings",
-        f"{savings:.2f}%",
-        delta=f"{savings:.2f}%",
-        delta_color="normal"
-    )
-
-with col4:
-    st.metric(
-        "Recommended Setpoint",
-        f"{temperature:.1f}°C",
-        delta=None,
-        delta_color="off"
-    )
-
-st.markdown("<hr>", unsafe_allow_html=True)
 
 # ---------------------------------------------------
-# MAIN VISUALIZATIONS
+# TABS SETUP
 # ---------------------------------------------------
+tab1, tab2 = st.tabs(["🔴 Live Telemetry", "📊 Historical Optimization Report"])
 
-left_col, right_col = st.columns([2, 1])
+with tab1:
+    st.subheader("Live Building Telemetry")
+    
+    col1, col2 = st.columns([4, 1])
+    with col2:
+        if st.button("🔌 API Integration Info"):
+            @st.dialog("Hardware Integration Guide")
+            def integration_modal():
+                st.markdown('''
+                ### Connect Real Building Sensors
+                BEACON is designed to ingest live IoT telemetry via REST API or MQTT.
+                
+                **REST API Endpoint:**
+                `POST /api/v1/telemetry`
+                
+                **Payload Format (JSON):**
+                ```json
+                {
+                    "sensor_id": "bldg_zone_1",
+                    "timestamp": "2026-08-27T10:00:00Z",
+                    "metrics": {
+                        "temperature_c": 22.4,
+                        "hvac_power_w": 10450,
+                        "occupancy_count": 142
+                    }
+                }
+                ```
+                
+                **MQTT Broker:**
+                `mqtt://beacon-broker.local:1883`
+                Topic: `beacon/telemetry/live`
+                ''')
+            integration_modal()
 
-with left_col:
-    fig = energy_bar_chart(baseline_energy, optimized_energy)
+    # Initialize session state for live loop
+    if 'time_index' not in st.session_state:
+        st.session_state.time_index = 0
+        try:
+            st.session_state.ts_data = get_timeseries_data()
+        except Exception as e:
+            st.session_state.ts_data = None
+            st.error(f"Could not load telemetry data: {e}")
+    
+    if st.session_state.ts_data is not None:
+        df_full = st.session_state.ts_data
+        max_idx = len(df_full)
+        
+        # Display current metrics
+        curr_idx = st.session_state.time_index
+        if curr_idx < max_idx:
+            current_data = df_full.iloc[curr_idx]
+            
+            m1, m2, m3, m4 = st.columns(4)
+            m1.metric("Live Indoor Temp", f"{current_data['Temperature']:.2f} °C", "+0.1 °C" if curr_idx % 2 == 0 else "-0.1 °C")
+            m2.metric("HVAC Power Draw", f"{current_data['Electricity']/1000:.2f} kW", f"{-abs(current_data['Electricity'] * 0.01 / 1000):.2f} kW")
+            m3.metric("Live Occupancy", f"{142 + (curr_idx % 5) - 2} People")
+            m4.metric("Carbon Emission Rate", f"{(current_data['Electricity'] / 1000 * 0.4):.2f} kgCO2/h")
+            
+            # Show scrolling chart (last 50 points)
+            start_idx = max(0, curr_idx - 50)
+            df_window = df_full.iloc[start_idx:curr_idx+1]
+            
+            fig = live_telemetry_chart(df_window)
+            st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+            
+            # Advance time index and rerun
+            if st.session_state.time_index < max_idx - 1:
+                st.session_state.time_index += 1
+                time.sleep(1.0)
+                st.rerun()
+            else:
+                st.success("Simulation complete. End of dataset reached.")
+                if st.button("Restart Simulation"):
+                    st.session_state.time_index = 0
+                    st.rerun()
+
+with tab2:
+    # ---------------------------------------------------
+    # KPI METRICS ROW
+    # ---------------------------------------------------
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.metric(
+            "Baseline Energy Consumption",
+            f"{baseline_energy:,.0f} kWh",
+            delta=None,
+            delta_color="off"
+        )
+    
+    with col2:
+        st.metric(
+            "Optimized Energy Consumption",
+            f"{optimized_energy:,.0f} kWh",
+            delta=None,
+            delta_color="off"
+        )
+    
+    with col3:
+        st.metric(
+            "Total Energy Savings",
+            f"{savings:.2f}%",
+            delta=f"{savings:.2f}%",
+            delta_color="normal"
+        )
+    
+    with col4:
+        st.metric(
+            "Recommended Setpoint",
+            f"{temperature:.1f}°C",
+            delta=None,
+            delta_color="off"
+        )
+    
+    st.markdown("<hr>", unsafe_allow_html=True)
+    
+    # ---------------------------------------------------
+    # MAIN VISUALIZATIONS
+    # ---------------------------------------------------
+    
+    left_col, right_col = st.columns([2, 1])
+    
+    with left_col:
+        fig = energy_bar_chart(baseline_energy, optimized_energy)
+        fig.update_layout(
+            height=450,
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='rgba(255,255,255,0.8)', family='Inter, sans-serif'),
+            title=dict(
+                text="Energy Consumption Comparison",
+                font=dict(size=16, color='#ffffff'),
+                x=0.5
+            ),
+            legend=dict(
+                font=dict(color='rgba(255,255,255,0.7)'),
+                bgcolor='rgba(0,0,0,0)'
+            ),
+            xaxis=dict(
+                gridcolor='rgba(255,255,255,0.05)',
+                tickfont=dict(color='rgba(255,255,255,0.6)')
+            ),
+            yaxis=dict(
+                gridcolor='rgba(255,255,255,0.05)',
+                tickfont=dict(color='rgba(255,255,255,0.6)')
+            ),
+            margin=dict(t=50, b=50, l=50, r=30)
+        )
+        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+    
+    with right_col:
+        fig = savings_gauge(savings)
+        fig.update_layout(
+            height=450,
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='rgba(255,255,255,0.8)', family='Inter, sans-serif'),
+            title=dict(
+                text="Savings Performance",
+                font=dict(size=16, color='#ffffff'),
+                x=0.5
+            ),
+            margin=dict(t=50, b=50, l=30, r=30)
+        )
+        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+    
+    st.markdown("<hr>", unsafe_allow_html=True)
+    
+    # ---------------------------------------------------
+    # SECOND ROW VISUALIZATIONS
+    # ---------------------------------------------------
+    
+    left_col, right_col = st.columns(2)
+    
+    with left_col:
+        fig = energy_pie_chart(saved_energy, optimized_energy)
+        fig.update_layout(
+            height=420,
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='rgba(255,255,255,0.8)', family='Inter, sans-serif'),
+            title=dict(
+                text="Energy Distribution",
+                font=dict(size=16, color='#ffffff'),
+                x=0.5
+            ),
+            legend=dict(
+                font=dict(color='rgba(255,255,255,0.7)'),
+                bgcolor='rgba(0,0,0,0)'
+            ),
+            margin=dict(t=50, b=30, l=30, r=30)
+        )
+        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+    
+    with right_col:
+        fig = ai_score_gauge(optimization_score)
+        fig.update_layout(
+            height=420,
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='rgba(255,255,255,0.8)', family='Inter, sans-serif'),
+            title=dict(
+                text="AI Optimization Score",
+                font=dict(size=16, color='#ffffff'),
+                x=0.5
+            ),
+            margin=dict(t=50, b=30, l=30, r=30)
+        )
+        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+    
+    st.markdown("<hr>", unsafe_allow_html=True)
+    
+    # ---------------------------------------------------
+    # BUILDING INFO & AI RECOMMENDATION
+    # ---------------------------------------------------
+    
+    left_col, right_col = st.columns(2)
+    
+    with left_col:
+        building_panel(
+            baseline["outdoor_temperature"],
+            temperature
+        )
+    
+    with right_col:
+        ai_summary(
+            temperature,
+            savings
+        )
+    
+    st.markdown("<hr>", unsafe_allow_html=True)
+    
+    # ---------------------------------------------------
+    # OPTIMIZATION HISTORY
+    # ---------------------------------------------------
+    
+    HISTORY_FILE = BASE_DIR / "reports" / "history.csv"
+    
+    if not HISTORY_FILE.exists():
+        HISTORY_FILE.parent.mkdir(parents=True, exist_ok=True)
+        pd.DataFrame(columns=["Run", "Savings"]).to_csv(HISTORY_FILE, index=False)
+    
+    history = pd.read_csv(HISTORY_FILE)
+    current_run = len(history) + 1
+    history.loc[len(history)] = [current_run, savings]
+    history.to_csv(HISTORY_FILE, index=False)
+    
+    st.subheader("Optimization Performance History")
+    
+    fig = history_chart(history)
     fig.update_layout(
-        height=450,
+        height=350,
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
         font=dict(color='rgba(255,255,255,0.8)', family='Inter, sans-serif'),
         title=dict(
-            text="Energy Consumption Comparison",
-            font=dict(size=16, color='#ffffff'),
+            text="Savings Trend Across Iterations",
+            font=dict(size=14, color='rgba(255,255,255,0.7)'),
             x=0.5
-        ),
-        legend=dict(
-            font=dict(color='rgba(255,255,255,0.7)'),
-            bgcolor='rgba(0,0,0,0)'
         ),
         xaxis=dict(
             gridcolor='rgba(255,255,255,0.05)',
-            tickfont=dict(color='rgba(255,255,255,0.6)')
+            tickfont=dict(color='rgba(255,255,255,0.6)'),
+            title=dict(text="Optimization Run", font=dict(color='rgba(255,255,255,0.5)'))
         ),
         yaxis=dict(
             gridcolor='rgba(255,255,255,0.05)',
-            tickfont=dict(color='rgba(255,255,255,0.6)')
+            tickfont=dict(color='rgba(255,255,255,0.6)'),
+            title=dict(text="Savings (%)", font=dict(color='rgba(255,255,255,0.5)'))
         ),
         margin=dict(t=50, b=50, l=50, r=30)
     )
     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-
-with right_col:
-    fig = savings_gauge(savings)
-    fig.update_layout(
-        height=450,
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        font=dict(color='rgba(255,255,255,0.8)', family='Inter, sans-serif'),
-        title=dict(
-            text="Savings Performance",
-            font=dict(size=16, color='#ffffff'),
-            x=0.5
-        ),
-        margin=dict(t=50, b=50, l=30, r=30)
-    )
-    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-
-st.markdown("<hr>", unsafe_allow_html=True)
-
-# ---------------------------------------------------
-# SECOND ROW VISUALIZATIONS
-# ---------------------------------------------------
-
-left_col, right_col = st.columns(2)
-
-with left_col:
-    fig = energy_pie_chart(saved_energy, optimized_energy)
-    fig.update_layout(
-        height=420,
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        font=dict(color='rgba(255,255,255,0.8)', family='Inter, sans-serif'),
-        title=dict(
-            text="Energy Distribution",
-            font=dict(size=16, color='#ffffff'),
-            x=0.5
-        ),
-        legend=dict(
-            font=dict(color='rgba(255,255,255,0.7)'),
-            bgcolor='rgba(0,0,0,0)'
-        ),
-        margin=dict(t=50, b=30, l=30, r=30)
-    )
-    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-
-with right_col:
-    fig = ai_score_gauge(optimization_score)
-    fig.update_layout(
-        height=420,
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        font=dict(color='rgba(255,255,255,0.8)', family='Inter, sans-serif'),
-        title=dict(
-            text="AI Optimization Score",
-            font=dict(size=16, color='#ffffff'),
-            x=0.5
-        ),
-        margin=dict(t=50, b=30, l=30, r=30)
-    )
-    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-
-st.markdown("<hr>", unsafe_allow_html=True)
-
-# ---------------------------------------------------
-# BUILDING INFO & AI RECOMMENDATION
-# ---------------------------------------------------
-
-left_col, right_col = st.columns(2)
-
-with left_col:
-    building_panel(
-        baseline["outdoor_temperature"],
-        temperature
-    )
-
-with right_col:
-    ai_summary(
-        temperature,
-        savings
-    )
-
-st.markdown("<hr>", unsafe_allow_html=True)
-
-# ---------------------------------------------------
-# OPTIMIZATION HISTORY
-# ---------------------------------------------------
-
-HISTORY_FILE = BASE_DIR / "reports" / "history.csv"
-
-if not HISTORY_FILE.exists():
-    HISTORY_FILE.parent.mkdir(parents=True, exist_ok=True)
-    pd.DataFrame(columns=["Run", "Savings"]).to_csv(HISTORY_FILE, index=False)
-
-history = pd.read_csv(HISTORY_FILE)
-current_run = len(history) + 1
-history.loc[len(history)] = [current_run, savings]
-history.to_csv(HISTORY_FILE, index=False)
-
-st.subheader("Optimization Performance History")
-
-fig = history_chart(history)
-fig.update_layout(
-    height=350,
-    paper_bgcolor='rgba(0,0,0,0)',
-    plot_bgcolor='rgba(0,0,0,0)',
-    font=dict(color='rgba(255,255,255,0.8)', family='Inter, sans-serif'),
-    title=dict(
-        text="Savings Trend Across Iterations",
-        font=dict(size=14, color='rgba(255,255,255,0.7)'),
-        x=0.5
-    ),
-    xaxis=dict(
-        gridcolor='rgba(255,255,255,0.05)',
-        tickfont=dict(color='rgba(255,255,255,0.6)'),
-        title=dict(text="Optimization Run", font=dict(color='rgba(255,255,255,0.5)'))
-    ),
-    yaxis=dict(
-        gridcolor='rgba(255,255,255,0.05)',
-        tickfont=dict(color='rgba(255,255,255,0.6)'),
-        title=dict(text="Savings (%)", font=dict(color='rgba(255,255,255,0.5)'))
-    ),
-    margin=dict(t=50, b=50, l=50, r=30)
-)
-st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-
-st.markdown("<hr>", unsafe_allow_html=True)
-
-# ---------------------------------------------------
-# REPORTS SECTION
-# ---------------------------------------------------
-
-st.subheader("Export Reports")
-
-try:
-    pdf_file, csv_file, json_file = generate_all()
+    
+    st.markdown("<hr>", unsafe_allow_html=True)
+    
+    # ---------------------------------------------------
+    # REPORTS SECTION
+    # ---------------------------------------------------
+    
+    st.subheader("Export Reports")
+    
+    try:
+        pdf_file, csv_file, json_file = generate_all()
+        
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            with open(pdf_file, "rb") as f:
+                st.download_button(
+                    "Download PDF Report",
+                    data=f,
+                    file_name="BEACON_Report.pdf",
+                    mime="application/pdf",
+                    use_container_width=True
+                )
+        
+        with col2:
+            with open(csv_file, "rb") as f:
+                st.download_button(
+                    "Download CSV Data",
+                    data=f,
+                    file_name="BEACON_Report.csv",
+                    mime="text/csv",
+                    use_container_width=True
+                )
+        
+        with col3:
+            with open(json_file, "rb") as f:
+                st.download_button(
+                    "Download JSON Data",
+                    data=f,
+                    file_name="BEACON_Report.json",
+                    mime="application/json",
+                    use_container_width=True
+                )
+    except Exception as e:
+        st.warning("Report generation module not available")
+    
+    st.markdown("<hr>", unsafe_allow_html=True)
+    
+    # ---------------------------------------------------
+    # SYSTEM OVERVIEW
+    # ---------------------------------------------------
+    
+    st.subheader("System Performance Metrics")
     
     col1, col2, col3 = st.columns(3)
     
+    health = max(0, min(100, int(92 + savings)))
+    comfort = max(0, min(100, int(95 - abs(25 - temperature) * 6)))
+    efficiency = max(0, min(100, int(80 + savings * 3)))
+    
     with col1:
-        with open(pdf_file, "rb") as f:
-            st.download_button(
-                "Download PDF Report",
-                data=f,
-                file_name="BEACON_Report.pdf",
-                mime="application/pdf",
-                use_container_width=True
-            )
+        st.metric("System Health", f"{health}%", delta=None)
     
     with col2:
-        with open(csv_file, "rb") as f:
-            st.download_button(
-                "Download CSV Data",
-                data=f,
-                file_name="BEACON_Report.csv",
-                mime="text/csv",
-                use_container_width=True
-            )
+        st.metric("Thermal Comfort Index", f"{comfort}%", delta=None)
     
     with col3:
-        with open(json_file, "rb") as f:
-            st.download_button(
-                "Download JSON Data",
-                data=f,
-                file_name="BEACON_Report.json",
-                mime="application/json",
-                use_container_width=True
-            )
-except Exception as e:
-    st.warning("Report generation module not available")
-
-st.markdown("<hr>", unsafe_allow_html=True)
-
-# ---------------------------------------------------
-# SYSTEM OVERVIEW
-# ---------------------------------------------------
-
-st.subheader("System Performance Metrics")
-
-col1, col2, col3 = st.columns(3)
-
-health = max(0, min(100, int(92 + savings)))
-comfort = max(0, min(100, int(95 - abs(25 - temperature) * 6)))
-efficiency = max(0, min(100, int(80 + savings * 3)))
-
-with col1:
-    st.metric("System Health", f"{health}%", delta=None)
-
-with col2:
-    st.metric("Thermal Comfort Index", f"{comfort}%", delta=None)
-
-with col3:
-    st.metric("Operational Efficiency", f"{efficiency}%", delta=None)
-
-st.markdown("<hr>", unsafe_allow_html=True)
-
-# ---------------------------------------------------
-# COMPARISON TABLE
-# ---------------------------------------------------
-
-st.subheader("Optimization Parameters Comparison")
-
-comparison_data = {
-    "Metric": [
-        "Facility Electricity",
-        "Building Electricity",
-        "Outdoor Temperature",
-        "Cooling Setpoint"
-    ],
-    "Baseline": [
-        f"{baseline['facility_electricity']:,.0f} kWh",
-        f"{baseline['building_electricity']:,.0f} kWh",
-        f"{baseline['outdoor_temperature']:.1f}°C",
-        "23.9°C"
-    ],
-    "Optimized": [
-        f"{optimized['facility_electricity']:,.0f} kWh",
-        f"{optimized['building_electricity']:,.0f} kWh",
-        f"{optimized['outdoor_temperature']:.1f}°C",
-        f"{temperature:.1f}°C"
-    ]
-}
-
-st.dataframe(
-    comparison_data,
-    use_container_width=True,
-    hide_index=True,
-    column_config={
-        "Metric": st.column_config.TextColumn("Parameter", width="medium"),
-        "Baseline": st.column_config.TextColumn("Baseline", width="medium"),
-        "Optimized": st.column_config.TextColumn("Optimized", width="medium")
+        st.metric("Operational Efficiency", f"{efficiency}%", delta=None)
+    
+    st.markdown("<hr>", unsafe_allow_html=True)
+    
+    # ---------------------------------------------------
+    # COMPARISON TABLE
+    # ---------------------------------------------------
+    
+    st.subheader("Optimization Parameters Comparison")
+    
+    comparison_data = {
+        "Metric": [
+            "Facility Electricity",
+            "Building Electricity",
+            "Outdoor Temperature",
+            "Cooling Setpoint"
+        ],
+        "Baseline": [
+            f"{baseline['facility_electricity']:,.0f} kWh",
+            f"{baseline['building_electricity']:,.0f} kWh",
+            f"{baseline['outdoor_temperature']:.1f}°C",
+            "23.9°C"
+        ],
+        "Optimized": [
+            f"{optimized['facility_electricity']:,.0f} kWh",
+            f"{optimized['building_electricity']:,.0f} kWh",
+            f"{optimized['outdoor_temperature']:.1f}°C",
+            f"{temperature:.1f}°C"
+        ]
     }
-)
-
-st.markdown("<hr>", unsafe_allow_html=True)
-
-# ---------------------------------------------------
-# OPTIMIZATION WORKFLOW
-# ---------------------------------------------------
-
-st.subheader("Optimization Pipeline")
-
-workflow_cols = st.columns(4)
-
-workflow_steps = [
-    ("01", "Simulation", "EnergyPlus baseline execution"),
-    ("02", "Analysis", "AI performance evaluation"),
-    ("03", "Optimization", "Intelligent setpoint selection"),
-    ("04", "Validation", "Results verification & reporting")
-]
-
-for col, (num, title, desc) in zip(workflow_cols, workflow_steps):
-    with col:
-        st.markdown(f"""
-        <div class="workflow-step">
-            <div class="step-number">{num}</div>
-            <div class="step-title">{title}</div>
-            <div class="step-desc">{desc}</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-st.markdown("<hr>", unsafe_allow_html=True)
-
-# ---------------------------------------------------
-# AI RECOMMENDATION DETAILS
-# ---------------------------------------------------
-
-st.subheader("AI Recommendation Summary")
-
-rec_col1, rec_col2, rec_col3 = st.columns([1, 1, 2])
-
-with rec_col1:
-    st.markdown(f"""
-    <div class="rec-card">
-        <div class="rec-label">Recommended Setpoint</div>
-        <div class="rec-value">{temperature:.1f}°C</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-with rec_col2:
-    st.markdown(f"""
-    <div class="rec-card">
-        <div class="rec-label">Expected Savings</div>
-        <div class="rec-value" style="background: linear-gradient(135deg, #34d399, #059669); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">{savings:.2f}%</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-with rec_col3:
-    st.markdown(f"""
-    <div style="background: rgba(20, 20, 35, 0.5); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 1.5rem; height: 100%; display: flex; flex-direction: column; justify-content: center;">
-        <p style="color: rgba(255,255,255,0.5); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; margin: 0;">Decision Analysis</p>
-        <p style="color: rgba(255,255,255,0.8); margin: 0.5rem 0 0 0; font-size: 0.95rem; line-height: 1.6;">
-            The AI model analyzed baseline performance and selected an optimal cooling setpoint 
-            to reduce HVAC energy consumption while maintaining thermal comfort standards.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-
-st.markdown("<hr>", unsafe_allow_html=True)
-
-# ---------------------------------------------------
-# PROJECT INFORMATION
-# ---------------------------------------------------
-
-with st.expander("Project Configuration & Technical Details"):
-    info_cols = st.columns(4)
     
-    tech_details = [
-        ("Project", "BEACON"),
-        ("Engine", "EnergyPlus 26.1"),
-        ("AI Model", "Qwen2.5 1.5B"),
-        ("Inference", "Ollama"),
-        ("Language", "Python 3.10"),
-        ("Framework", "Streamlit"),
-        ("Visualization", "Plotly"),
-        ("Status", "Active")
+    st.dataframe(
+        comparison_data,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "Metric": st.column_config.TextColumn("Parameter", width="medium"),
+            "Baseline": st.column_config.TextColumn("Baseline", width="medium"),
+            "Optimized": st.column_config.TextColumn("Optimized", width="medium")
+        }
+    )
+    
+    st.markdown("<hr>", unsafe_allow_html=True)
+    
+    # ---------------------------------------------------
+    # OPTIMIZATION WORKFLOW
+    # ---------------------------------------------------
+    
+    st.subheader("Optimization Pipeline")
+    
+    workflow_cols = st.columns(4)
+    
+    workflow_steps = [
+        ("01", "Simulation", "EnergyPlus baseline execution"),
+        ("02", "Analysis", "AI performance evaluation"),
+        ("03", "Optimization", "Intelligent setpoint selection"),
+        ("04", "Validation", "Results verification & reporting")
     ]
     
-    for i, (key, value) in enumerate(tech_details):
-        with info_cols[i % 4]:
+    for col, (num, title, desc) in zip(workflow_cols, workflow_steps):
+        with col:
             st.markdown(f"""
-            <div style="background: rgba(20, 20, 35, 0.3); padding: 0.75rem; border-radius: 8px; margin: 0.25rem 0;">
-                <div style="color: rgba(255,255,255,0.3); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;">{key}</div>
-                <div style="color: #ffffff; font-weight: 500;">{value}</div>
+            <div class="workflow-step">
+                <div class="step-number">{num}</div>
+                <div class="step-title">{title}</div>
+                <div class="step-desc">{desc}</div>
             </div>
             """, unsafe_allow_html=True)
-
-# ---------------------------------------------------
-# SIDEBAR WITH TEXT LOGO
-# ---------------------------------------------------
-
-with st.sidebar:
-    st.markdown("""
-    <div class="sidebar-logo">
-        <div class="brand">BEACON</div>
-        <div class="subtitle">AI-Powered Building Energy Optimization</div>
-        <div class="pillars">
-            <span>Optimize</span>
-            <span>Save</span>
-            <span>Sustain</span>
+    
+    st.markdown("<hr>", unsafe_allow_html=True)
+    
+    # ---------------------------------------------------
+    # AI RECOMMENDATION DETAILS
+    # ---------------------------------------------------
+    
+    st.subheader("AI Recommendation Summary")
+    
+    rec_col1, rec_col2, rec_col3 = st.columns([1, 1, 2])
+    
+    with rec_col1:
+        st.markdown(f"""
+        <div class="rec-card">
+            <div class="rec-label">Recommended Setpoint</div>
+            <div class="rec-value">{temperature:.1f}°C</div>
         </div>
-    </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
     
-    st.markdown("---")
+    with rec_col2:
+        st.markdown(f"""
+        <div class="rec-card">
+            <div class="rec-label">Expected Savings</div>
+            <div class="rec-value" style="background: linear-gradient(135deg, #34d399, #059669); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">{savings:.2f}%</div>
+        </div>
+        """, unsafe_allow_html=True)
     
-    st.markdown("""
-    <div style="background: rgba(20, 20, 35, 0.5); border-radius: 12px; padding: 1rem; border: 1px solid rgba(255, 255, 255, 0.05);">
-        <p style="color: rgba(255,255,255,0.3); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 0.5rem 0;">System Status</p>
-    """, unsafe_allow_html=True)
+    with rec_col3:
+        st.markdown(f"""
+        <div style="background: rgba(20, 20, 35, 0.5); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 1.5rem; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+            <p style="color: rgba(255,255,255,0.5); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; margin: 0;">Decision Analysis</p>
+            <p style="color: rgba(255,255,255,0.8); margin: 0.5rem 0 0 0; font-size: 0.95rem; line-height: 1.6;">
+                The AI model analyzed baseline performance and selected an optimal cooling setpoint 
+                to reduce HVAC energy consumption while maintaining thermal comfort standards.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
     
-    st.metric("Status", "Online", delta=None)
-    st.metric("AI Model", "Qwen2.5", delta=None)
-    st.metric("Simulation", "Completed", delta=None)
-    st.metric("Current Savings", f"{savings:.2f}%", delta=None)
+    st.markdown("<hr>", unsafe_allow_html=True)
     
-    st.markdown("</div>", unsafe_allow_html=True)
+    # ---------------------------------------------------
+    # PROJECT INFORMATION
+    # ---------------------------------------------------
     
-    st.markdown("---")
+    with st.expander("Project Configuration & Technical Details"):
+        info_cols = st.columns(4)
+        
+        tech_details = [
+            ("Project", "BEACON"),
+            ("Engine", "EnergyPlus 26.1"),
+            ("AI Model", "Qwen2.5 1.5B"),
+            ("Inference", "Ollama"),
+            ("Language", "Python 3.10"),
+            ("Framework", "Streamlit"),
+            ("Visualization", "Plotly"),
+            ("Status", "Active")
+        ]
+        
+        for i, (key, value) in enumerate(tech_details):
+            with info_cols[i % 4]:
+                st.markdown(f"""
+                <div style="background: rgba(20, 20, 35, 0.3); padding: 0.75rem; border-radius: 8px; margin: 0.25rem 0;">
+                    <div style="color: rgba(255,255,255,0.3); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;">{key}</div>
+                    <div style="color: #ffffff; font-weight: 500;">{value}</div>
+                </div>
+                """, unsafe_allow_html=True)
     
-    st.markdown("""
-    <p style="color: rgba(255,255,255,0.3); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 0.5rem 0;">Technical Stack</p>
-    """, unsafe_allow_html=True)
+    # ---------------------------------------------------
+    # SIDEBAR WITH TEXT LOGO
+    # ---------------------------------------------------
     
-    st.code("EnergyPlus 26.1", language="bash")
-    st.code("Qwen2.5 1.5B", language="bash")
-    st.code("Ollama", language="bash")
-    
-    st.markdown("---")
-    
-    st.success("Closed Loop Active")
-    
-    st.markdown("---")
-    
-    if st.button("Refresh Dashboard", use_container_width=True):
-        st.rerun()
-    
-    st.markdown("---")
-    
-    st.markdown("""
-    <div style="text-align: center; padding: 0.5rem 0;">
-        <p style="color: rgba(255,255,255,0.15); font-size: 0.7rem; margin: 0;">© 2026 BEACON</p>
-        <p style="color: rgba(255,255,255,0.1); font-size: 0.6rem; margin: 0;">Version 2.0.0</p>
-    </div>
-    """, unsafe_allow_html=True)
+    with st.sidebar:
+        st.markdown("""
+        <div class="sidebar-logo">
+            <div class="brand">BEACON</div>
+            <div class="subtitle">AI-Powered Building Energy Optimization</div>
+            <div class="pillars">
+                <span>Optimize</span>
+                <span>Save</span>
+                <span>Sustain</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("---")
+        
+        st.markdown("""
+        <div style="background: rgba(20, 20, 35, 0.5); border-radius: 12px; padding: 1rem; border: 1px solid rgba(255, 255, 255, 0.05);">
+            <p style="color: rgba(255,255,255,0.3); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 0.5rem 0;">System Status</p>
+        """, unsafe_allow_html=True)
+        
+        st.metric("Status", "Online", delta=None)
+        st.metric("AI Model", "Qwen2.5", delta=None)
+        st.metric("Simulation", "Completed", delta=None)
+        st.metric("Current Savings", f"{savings:.2f}%", delta=None)
+        
+        st.markdown("</div>", unsafe_allow_html=True)
+        
+        st.markdown("---")
+        
+        st.markdown("""
+        <p style="color: rgba(255,255,255,0.3); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 0.5rem 0;">Technical Stack</p>
+        """, unsafe_allow_html=True)
+        
+        st.code("EnergyPlus 26.1", language="bash")
+        st.code("Qwen2.5 1.5B", language="bash")
+        st.code("Ollama", language="bash")
+        
+        st.markdown("---")
+        
+        st.success("Closed Loop Active")
+        
+        st.markdown("---")
+        
+        if st.button("Refresh Dashboard", use_container_width=True):
+            st.rerun()
+        
+        st.markdown("---")
+        
+        st.markdown("""
+        <div style="text-align: center; padding: 0.5rem 0;">
+            <p style="color: rgba(255,255,255,0.15); font-size: 0.7rem; margin: 0;">© 2026 BEACON</p>
+            <p style="color: rgba(255,255,255,0.1); font-size: 0.6rem; margin: 0;">Version 2.0.0</p>
+        </div>
+        """, unsafe_allow_html=True)

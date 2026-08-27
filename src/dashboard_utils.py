@@ -330,3 +330,55 @@ def interactive_globe():
 
     return fig
 
+
+
+# -----------------------------
+# LIVE TELEMETRY GRAPH
+# -----------------------------
+
+def live_telemetry_chart(df):
+    from plotly.subplots import make_subplots
+    
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
+    
+    # Power trace
+    fig.add_trace(
+        go.Scatter(
+            x=df["TimeIndex"],
+            y=df["Electricity"],
+            mode="lines",
+            name="HVAC Power (W)",
+            line=dict(color="#34d399", width=2),
+            fill="tozeroy",
+            fillcolor="rgba(52, 211, 153, 0.1)"
+        ),
+        secondary_y=False,
+    )
+    
+    # Temp trace
+    fig.add_trace(
+        go.Scatter(
+            x=df["TimeIndex"],
+            y=df["Temperature"],
+            mode="lines",
+            name="Temperature (°C)",
+            line=dict(color="#818cf8", width=2, dash="dot")
+        ),
+        secondary_y=True,
+    )
+    
+    fig.update_layout(
+        title="Real-Time Building Telemetry",
+        height=400,
+        margin=dict(l=20, r=20, t=50, b=20),
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
+        showlegend=True,
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        xaxis=dict(showgrid=False, zeroline=False, color="rgba(255,255,255,0.5)", title="Time Steps"),
+    )
+    
+    fig.update_yaxes(title_text="Power (W)", showgrid=True, gridcolor="rgba(255,255,255,0.05)", zeroline=False, color="#34d399", secondary_y=False)
+    fig.update_yaxes(title_text="Temperature (°C)", showgrid=False, zeroline=False, color="#818cf8", secondary_y=True)
+
+    return fig
