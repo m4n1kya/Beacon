@@ -27,35 +27,27 @@ def energy_bar_chart(baseline, optimized):
 
     fig.add_trace(
         go.Bar(
-            name="Facility Energy",
+            name="Baseline",
             x=["Baseline", "Optimized"],
             y=[baseline, optimized],
-            text=[
-                f"{baseline:,.0f}",
-                f"{optimized:,.0f}"
-            ],
-            textposition="outside"
+            text=[f"{baseline:,.0f}", f"{optimized:,.0f}"],
+            textposition="auto",
+            marker_color=["rgba(99, 102, 241, 0.3)", "#34d399"],
+            marker_line_color=["rgba(99, 102, 241, 0.8)", "#10b981"],
+            marker_line_width=1,
+            width=0.4
         )
     )
 
     fig.update_layout(
-
-        template="plotly_dark",
-
         title="Facility Electricity Comparison",
-
         height=420,
-
-        margin=dict(
-            l=30,
-            r=30,
-            t=60,
-            b=30
-        ),
-
-        yaxis_title="Energy (J)",
-
-        showlegend=False
+        margin=dict(l=20, r=20, t=50, b=20),
+        showlegend=False,
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
+        xaxis=dict(showgrid=False, zeroline=False, visible=True),
+        yaxis=dict(showgrid=False, zeroline=False, visible=False)
     )
 
     return fig
@@ -67,25 +59,24 @@ def energy_bar_chart(baseline, optimized):
 
 def energy_pie_chart(saved, remaining):
 
-    fig = px.pie(
-
+    fig = go.Figure(data=[go.Pie(
         values=[saved, remaining],
-
-        names=[
-            "Energy Saved",
-            "Energy Used"
-        ],
-
-        hole=0.55,
-
-        template="plotly_dark"
-    )
+        labels=["Energy Saved", "Energy Used"],
+        hole=0.75,
+        marker=dict(colors=["#34d399", "rgba(99, 102, 241, 0.15)"], line=dict(color="rgba(255,255,255,0.05)", width=2)),
+        textinfo="percent",
+        textfont=dict(color="rgba(255,255,255,0.8)", size=14),
+        hoverinfo="label+value"
+    )])
 
     fig.update_layout(
-
         title="Energy Distribution",
-
-        height=420
+        height=420,
+        margin=dict(l=20, r=20, t=50, b=20),
+        showlegend=True,
+        legend=dict(orientation="h", yanchor="bottom", y=-0.15, xanchor="center", x=0.5),
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
     )
 
     return fig
@@ -98,60 +89,25 @@ def energy_pie_chart(saved, remaining):
 def savings_gauge(value):
 
     fig = go.Figure(
-
         go.Indicator(
-
             mode="gauge+number",
-
             value=value,
-
-            number={
-                "suffix": "%"
-            },
-
-            title={
-                "text": "Energy Savings"
-            },
-
+            number={"suffix": "%", "font": {"color": "#34d399", "size": 40}},
+            title={"text": "Energy Savings", "font": {"color": "rgba(255,255,255,0.7)", "size": 14}},
             gauge={
-
-                "axis": {
-                    "range": [0, 100]
-                },
-
-                "bar": {
-                    "thickness": 0.3
-                },
-
-                "steps": [
-
-                    {
-                        "range": [0, 30],
-                        "color": "#b91c1c"
-                    },
-
-                    {
-                        "range": [30, 60],
-                        "color": "#f59e0b"
-                    },
-
-                    {
-                        "range": [60, 100],
-                        "color": "#16a34a"
-                    }
-
-                ]
+                "axis": {"range": [0, 100], "visible": False},
+                "bar": {"color": "#34d399", "thickness": 0.2},
+                "bgcolor": "rgba(255,255,255,0.05)",
+                "borderwidth": 0
             }
-
         )
-
     )
 
     fig.update_layout(
-
-        template="plotly_dark",
-
-        height=350
+        height=350,
+        margin=dict(l=20, r=20, t=50, b=20),
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
     )
 
     return fig
@@ -164,56 +120,25 @@ def savings_gauge(value):
 def ai_score_gauge(score):
 
     fig = go.Figure(
-
         go.Indicator(
-
             mode="gauge+number",
-
             value=score,
-
-            title={
-                "text": "Optimization Score"
-            },
-
+            number={"font": {"color": "#818cf8", "size": 40}},
+            title={"text": "Optimization Score", "font": {"color": "rgba(255,255,255,0.7)", "size": 14}},
             gauge={
-
-                "axis": {
-                    "range": [0, 100]
-                },
-
-                "bar": {
-                    "thickness": 0.3
-                },
-
-                "steps": [
-
-                    {
-                        "range": [0, 50],
-                        "color": "#b91c1c"
-                    },
-
-                    {
-                        "range": [50, 80],
-                        "color": "#f59e0b"
-                    },
-
-                    {
-                        "range": [80, 100],
-                        "color": "#16a34a"
-                    }
-
-                ]
+                "axis": {"range": [0, 100], "visible": False},
+                "bar": {"color": "#818cf8", "thickness": 0.2},
+                "bgcolor": "rgba(255,255,255,0.05)",
+                "borderwidth": 0
             }
-
         )
-
     )
 
     fig.update_layout(
-
-        template="plotly_dark",
-
-        height=350
+        height=350,
+        margin=dict(l=20, r=20, t=50, b=20),
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
     )
 
     return fig
@@ -225,24 +150,28 @@ def ai_score_gauge(score):
 
 def history_chart(df):
 
-    fig = px.line(
-
-        df,
-
-        x="Run",
-
-        y="Savings",
-
-        markers=True,
-
-        template="plotly_dark"
+    fig = go.Figure()
+    
+    fig.add_trace(
+        go.Scatter(
+            x=df["Run"],
+            y=df["Savings"],
+            mode="lines+markers",
+            line=dict(color="#818cf8", width=3),
+            marker=dict(size=8, color="#6366f1", line=dict(width=2, color="rgba(255,255,255,0.8)")),
+            fill="tozeroy",
+            fillcolor="rgba(129, 140, 248, 0.1)"
+        )
     )
 
     fig.update_layout(
-
         title="Optimization History",
-
-        height=350
+        height=350,
+        margin=dict(l=20, r=20, t=50, b=20),
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
+        xaxis=dict(showgrid=False, zeroline=False, color="rgba(255,255,255,0.5)"),
+        yaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.05)", zeroline=False, color="rgba(255,255,255,0.5)")
     )
 
     return fig
