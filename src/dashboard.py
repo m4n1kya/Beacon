@@ -36,6 +36,20 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------
+# ENCODE BACKGROUND IMAGE
+# ---------------------------------------------------
+
+def get_base64_image(image_path):
+    try:
+        with open(image_path, "rb") as img_file:
+            return base64.b64encode(img_file.read()).decode()
+    except (FileNotFoundError, IOError):
+        return None
+
+bg_image_path = Path(__file__).parent.parent / "assets" / "bg.jpg"
+bg_image_base64 = get_base64_image(bg_image_path)
+
+# ---------------------------------------------------
 # CUSTOM CSS - PROFESSIONAL DARK THEME WITH TEXT LOGO
 # ---------------------------------------------------
 
@@ -50,7 +64,14 @@ css_style = f"""
     
     /* Main background with premium image */
     .stApp {{
-        background: #121212;
+        background: linear-gradient(
+            135deg,
+            rgba(15, 15, 20, 0.90) 0%,
+            rgba(10, 10, 15, 0.85) 50%,
+            rgba(15, 15, 20, 0.90) 100%
+        ),
+        url("data:image/jpg;base64,{bg_image_base64}") center/cover no-repeat fixed;
+        background-blend-mode: overlay;
     }}
     
     /* Content container with glass effect */
@@ -487,6 +508,11 @@ css_style = f"""
 </style>
 """
 
+if not bg_image_base64:
+    css_style = css_style.replace(
+        f'url("data:image/jpg;base64,None")',
+        'none'
+    )
 
 st.markdown(css_style, unsafe_allow_html=True)
 
