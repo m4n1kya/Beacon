@@ -1,4 +1,5 @@
 {
+    "project": "BEACON",
     "baseline": {
         "outdoor_temperature": 25.578812785388127,
         "building_electricity": 257872140000.0,

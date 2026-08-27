@@ -118,7 +118,7 @@ def generate_pdf():
 
     story.append(
         Paragraph(
-            "<b>EcoLoop AI Energy Optimization Report</b>",
+            "<b>BEACON AI Energy Optimization Report</b>",
             styles["Title"]
         )
     )

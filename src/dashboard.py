@@ -14,7 +14,8 @@ from dashboard_utils import (
     ai_score_gauge,
     building_panel,
     ai_summary,
-    history_chart
+    history_chart,
+    interactive_globe
 )
 
 from report_generator import generate_all
@@ -24,7 +25,7 @@ from report_generator import generate_all
 # ---------------------------------------------------
 
 st.set_page_config(
-    page_title="EcoLoop AI Energy Optimization",
+    page_title="BEACON",
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -537,12 +538,11 @@ with col1:
     st.markdown("""
     <div class="header-logo">
         <div class="logo-icon">
-            <span class="main-text">ECO</span>
-            <span class="main-text" style="font-size: 0.8rem; letter-spacing: 0.2em;">LOOP</span>
+            <span class="main-text">BEACON</span>
             <span class="sub-text">⚡ ENERGY</span>
         </div>
         <div class="header-title">
-            <div class="brand">EcoLoop</div>
+            <div class="brand">BEACON</div>
             <div class="tagline">AI-Powered Building Energy Optimization</div>
             <div class="pillars">
                 <span>Optimize</span>
@@ -562,6 +562,14 @@ with col2:
 with col3:
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown(f"<div style='text-align: right; padding: 0.3rem 0;'><span style='color: rgba(255,255,255,0.3); font-size: 0.8rem;'>v2.0.0</span></div>", unsafe_allow_html=True)
+
+st.markdown("<hr>", unsafe_allow_html=True)
+
+# ---------------------------------------------------
+# GLOBE VISUALIZATION (HERO SECTION)
+# ---------------------------------------------------
+
+st.plotly_chart(interactive_globe(), use_container_width=True, config={'displayModeBar': False})
 
 st.markdown("<hr>", unsafe_allow_html=True)
 
@@ -781,7 +789,7 @@ try:
             st.download_button(
                 "Download PDF Report",
                 data=f,
-                file_name="EcoLoop_Report.pdf",
+                file_name="BEACON_Report.pdf",
                 mime="application/pdf",
                 use_container_width=True
             )
@@ -791,7 +799,7 @@ try:
             st.download_button(
                 "Download CSV Data",
                 data=f,
-                file_name="EcoLoop_Report.csv",
+                file_name="BEACON_Report.csv",
                 mime="text/csv",
                 use_container_width=True
             )
@@ -801,7 +809,7 @@ try:
             st.download_button(
                 "Download JSON Data",
                 data=f,
-                file_name="EcoLoop_Report.json",
+                file_name="BEACON_Report.json",
                 mime="application/json",
                 use_container_width=True
             )
@@ -945,7 +953,7 @@ with st.expander("Project Configuration & Technical Details"):
     info_cols = st.columns(4)
     
     tech_details = [
-        ("Project", "EcoLoop"),
+        ("Project", "BEACON"),
         ("Engine", "EnergyPlus 26.1"),
         ("AI Model", "Qwen2.5 1.5B"),
         ("Inference", "Ollama"),
@@ -971,7 +979,7 @@ with st.expander("Project Configuration & Technical Details"):
 with st.sidebar:
     st.markdown("""
     <div class="sidebar-logo">
-        <div class="brand">ECO LOOP</div>
+        <div class="brand">BEACON</div>
         <div class="subtitle">AI-Powered Building Energy Optimization</div>
         <div class="pillars">
             <span>Optimize</span>
@@ -1018,7 +1026,7 @@ with st.sidebar:
     
     st.markdown("""
     <div style="text-align: center; padding: 0.5rem 0;">
-        <p style="color: rgba(255,255,255,0.15); font-size: 0.7rem; margin: 0;">© 2026 EcoLoop</p>
+        <p style="color: rgba(255,255,255,0.15); font-size: 0.7rem; margin: 0;">© 2026 BEACON</p>
         <p style="color: rgba(255,255,255,0.1); font-size: 0.6rem; margin: 0;">Version 2.0.0</p>
     </div>
     """, unsafe_allow_html=True)

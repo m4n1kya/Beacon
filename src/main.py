@@ -6,7 +6,7 @@ from config import MODELS_DIR
 
 import json
 
-print("========== ECO LOOP ==========")
+print("========== BEACON ==========")
 
 # ---------------------------------
 # 1. Baseline Simulation

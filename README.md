@@ -1,4 +1,6 @@
-# EcoLoop: AI-Powered Building Energy Optimization using EnergyPlus and Large Language Models
+# BEACON — Building Energy Analytics & Control Optimization Network
+
+AI-Powered Building Energy Optimization using EnergyPlus and Large Language Models
 
 <p align="center">
 
@@ -12,9 +14,9 @@ EnergyPlus • Ollama • Qwen2.5 • Python • Streamlit
 
 ## Project Overview
 
-EcoLoop is an AI-powered building energy optimization system that combines **EnergyPlus building simulation** with a **Large Language Model (LLM)** to automatically analyze building performance, recommend HVAC optimization strategies, modify building control parameters, and evaluate energy savings through an iterative closed-loop workflow.
+BEACON is an AI-powered building energy optimization system that combines **EnergyPlus building simulation** with a **Large Language Model (LLM)** to automatically analyze building performance, recommend HVAC optimization strategies, modify building control parameters, and evaluate energy savings through an iterative closed-loop workflow.
 
-Instead of manually inspecting EnergyPlus outputs and tuning HVAC schedules, EcoLoop automates the entire optimization process. The system analyzes simulation results, generates intelligent recommendations using a locally running Large Language Model (Qwen2.5 through Ollama), updates the building model, reruns the simulation, and compares energy performance before and after optimization.
+Instead of manually inspecting EnergyPlus outputs and tuning HVAC schedules, BEACON automates the entire optimization process. The system analyzes simulation results, generates intelligent recommendations using a locally running Large Language Model (Qwen2.5 through Ollama), updates the building model, reruns the simulation, and compares energy performance before and after optimization.
 
 The project demonstrates how Artificial Intelligence can support sustainable building management by reducing electricity consumption while maintaining occupant comfort.
 
@@ -34,7 +36,7 @@ Traditional EnergyPlus workflows require engineers to:
 
 This process is time-consuming and requires domain expertise.
 
-EcoLoop automates this workflow using Artificial Intelligence to provide an intelligent closed-loop optimization system.
+BEACON automates this workflow using Artificial Intelligence to provide an intelligent closed-loop optimization system.
 
 ---
 
@@ -261,7 +263,7 @@ Run optimized simulation and compare energy savings.
 # Project Structure
 
 ```
-EcoLoop/
+BEACON/
 │
 ├── README.md
 ├── LICENSE
@@ -328,9 +330,9 @@ EcoLoop/
 ## 1. Clone Repository
 
 ```bash
-git clone https://github.com/yourusername/EcoLoop.git
+git clone https://github.com/yourusername/BEACON.git
 
-cd EcoLoop
+cd BEACON
 ```
 
 ---
@@ -539,7 +541,7 @@ These metrics are parsed directly from the EnergyPlus SQLite output.
 
 # Generated Reports
 
-After each run EcoLoop automatically generates
+After each run BEACON automatically generates
 
 ### PDF
 
@@ -671,7 +673,7 @@ The AI-driven optimization workflow successfully reduced the facility electricit
 
 # Future Enhancements
 
-Future versions of EcoLoop may include:
+Future versions of BEACON may include:
 
 - Multi-zone HVAC optimization
 - Reinforcement Learning for adaptive control
@@ -787,7 +789,7 @@ See the **LICENSE** file for details.
 # Repository
 
 ```
-EcoLoop/
+BEACON/
 ```
 
 An AI-powered closed-loop building energy optimization framework combining EnergyPlus simulations with Large Language Models to improve building energy efficiency through intelligent HVAC optimization.
@@ -802,7 +804,7 @@ If this project helped you learn about AI-assisted building energy optimization,
 
 <p align="center">
 
-**EcoLoop**
+**BEACON**
 
 *AI-Powered Building Energy Optimization using EnergyPlus and Large Language Models*
 
