@@ -36,20 +36,6 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------
-# ENCODE BACKGROUND IMAGE
-# ---------------------------------------------------
-
-def get_base64_image(image_path):
-    try:
-        with open(image_path, "rb") as img_file:
-            return base64.b64encode(img_file.read()).decode()
-    except (FileNotFoundError, IOError):
-        return None
-
-bg_image_path = Path("D:/Desktop/Vault/PROJECT/Blueprints/IMG/Black/2206_w019_n001_602b_p15_602.jpg")
-bg_image_base64 = get_base64_image(bg_image_path)
-
-# ---------------------------------------------------
 # CUSTOM CSS - PROFESSIONAL DARK THEME WITH TEXT LOGO
 # ---------------------------------------------------
 
@@ -64,14 +50,7 @@ css_style = f"""
     
     /* Main background with premium image */
     .stApp {{
-        background: linear-gradient(
-            135deg,
-            rgba(10, 10, 10, 0.92) 0%,
-            rgba(20, 20, 30, 0.88) 50%,
-            rgba(10, 10, 10, 0.92) 100%
-        ),
-        url("data:image/jpg;base64,{bg_image_base64}") center/cover no-repeat fixed;
-        background-blend-mode: overlay;
+        background: #121212;
     }}
     
     /* Content container with glass effect */
