@@ -81,11 +81,24 @@ css_style = f"""
         backdrop-filter: blur(20px) saturate(1.2);
         -webkit-backdrop-filter: blur(20px) saturate(1.2);
         border-radius: 20px;
-        margin: 1.5rem;
         border: 1px solid rgba(255, 255, 255, 0.06);
         box-shadow: 
             0 25px 50px -12px rgba(0, 0, 0, 0.8),
             inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            
+        /* 80% width centered, prevents horizontal scrollbar */
+        max-width: 80% !important;
+        margin: 1.5rem auto !important;
+    }}
+    
+    /* Responsive: 100% width on smaller screens */
+    @media (max-width: 1024px) {{
+        .block-container {{
+            max-width: 100% !important;
+            margin: 0 auto !important;
+            border-radius: 0 !important;
+            padding: 1rem !important;
+        }}
     }}
     
     /* Header logo styling */
