@@ -377,38 +377,10 @@ def interactive_globe():
         )
     )
 
-    frames = []
-    for lon in range(0, 360, 2):
-        frames.append(go.Frame(layout=dict(geo=dict(projection=dict(rotation=dict(lon=lon))))))
-    fig.frames = frames
-
     fig.update_layout(
-        updatemenus=[
-            dict(
-                type='buttons',
-                showactive=False,
-                y=0.1,
-                x=0.1,
-                xanchor='left',
-                yanchor='bottom',
-                buttons=[
-                    dict(
-                        label='Spin',
-                        method='animate',
-                        args=[None, dict(frame=dict(duration=30, redraw=True), transition=dict(duration=0), fromcurrent=True, mode='immediate')]
-                    ),
-                    dict(
-                        label='Stop',
-                        method='animate',
-                        args=[[None], dict(frame=dict(duration=0, redraw=False), mode='immediate', transition=dict(duration=0))]
-                    )
-                ]
-            )
-        ],
         showlegend=False,
         geo=dict(
             projection_type='orthographic',
-            projection_scale=1.4,
             showcoastlines=True,
             coastlinecolor='rgba(255, 255, 255, 0.1)',
             showland=True,
@@ -424,7 +396,7 @@ def interactive_globe():
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
         margin=dict(l=0, r=0, t=10, b=10),
-        height=700,
+        height=500,
     )
 
     return fig

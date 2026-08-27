@@ -569,7 +569,25 @@ st.markdown("<hr>", unsafe_allow_html=True)
 # GLOBE VISUALIZATION (HERO SECTION)
 # ---------------------------------------------------
 
-st.plotly_chart(interactive_globe(), use_container_width=True, config={'displayModeBar': False, 'scrollZoom': False})
+import streamlit.components.v1 as components
+
+globe_fig = interactive_globe()
+globe_html = globe_fig.to_html(
+    config={'displayModeBar': False, 'scrollZoom': False},
+    include_plotlyjs="cdn",
+    full_html=True,
+    post_script="""
+    var gd = document.getElementsByClassName('plotly-graph-div')[0];
+    var lon = 0;
+    function rotateGlobe() {
+        lon = (lon + 0.3) % 360;
+        Plotly.relayout(gd, {'geo.projection.rotation.lon': lon});
+        requestAnimationFrame(rotateGlobe);
+    }
+    requestAnimationFrame(rotateGlobe);
+    """
+)
+components.html(globe_html, height=500)
 
 st.markdown("<hr>", unsafe_allow_html=True)
 
