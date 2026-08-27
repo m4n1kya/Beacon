@@ -30,7 +30,7 @@ from report_generator import generate_all
 
 st.set_page_config(
     page_title="BEACON",
-    page_icon="⚡",
+    page_icon="B",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -555,7 +555,7 @@ with col1:
     <div class="header-logo">
         <div class="logo-icon">
             <span class="main-text">BEACON</span>
-            <span class="sub-text">⚡ ENERGY</span>
+            <span class="sub-text">ENERGY</span>
         </div>
         <div class="header-title">
             <div class="brand">BEACON</div>
@@ -611,14 +611,14 @@ st.markdown("<hr>", unsafe_allow_html=True)
 # ---------------------------------------------------
 # TABS SETUP
 # ---------------------------------------------------
-tab1, tab2 = st.tabs(["🔴 Live Telemetry", "📊 Historical Optimization Report"])
+tab1, tab2 = st.tabs(["Live Telemetry", "Historical Optimization Report"])
 
 with tab1:
     st.subheader("Live Building Telemetry")
     
     col1, col2 = st.columns([4, 1])
     with col2:
-        if st.button("🔌 API Integration Info"):
+        if st.button("API Integration Info"):
             @st.dialog("Hardware Integration Guide")
             def integration_modal():
                 st.markdown('''
