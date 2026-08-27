@@ -644,38 +644,40 @@ with tab1:
             st.session_state.ts_data = None
             st.error(f"Could not load telemetry data: {e}")
     
-    if st.session_state.ts_data is not None:
-        df_full = st.session_state.ts_data
-        max_idx = len(df_full)
-        
-        # Display current metrics
-        curr_idx = st.session_state.time_index
-        if curr_idx < max_idx:
-            current_data = df_full.iloc[curr_idx]
+    @st.fragment(run_every=1.0)
+    def render_live_telemetry():
+        if st.session_state.ts_data is not None:
+            df_full = st.session_state.ts_data
+            max_idx = len(df_full)
             
-            m1, m2, m3, m4 = st.columns(4)
-            m1.metric("Live Indoor Temp", f"{current_data['Temperature']:.2f} °C", "+0.1 °C" if curr_idx % 2 == 0 else "-0.1 °C")
-            m2.metric("HVAC Power Draw", f"{current_data['Electricity']/1000:.2f} kW", f"{-abs(current_data['Electricity'] * 0.01 / 1000):.2f} kW")
-            m3.metric("Live Occupancy", f"{142 + (curr_idx % 5) - 2} People")
-            m4.metric("Carbon Emission Rate", f"{(current_data['Electricity'] / 1000 * 0.4):.2f} kgCO2/h")
-            
-            # Show scrolling chart (last 50 points)
-            start_idx = max(0, curr_idx - 50)
-            df_window = df_full.iloc[start_idx:curr_idx+1]
-            
-            fig = live_telemetry_chart(df_window)
-            st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-            
-            # Advance time index and rerun
-            if st.session_state.time_index < max_idx - 1:
-                st.session_state.time_index += 1
-                time.sleep(1.0)
-                st.rerun()
-            else:
-                st.success("Simulation complete. End of dataset reached.")
-                if st.button("Restart Simulation"):
-                    st.session_state.time_index = 0
-                    st.rerun()
+            # Display current metrics
+            curr_idx = st.session_state.time_index
+            if curr_idx < max_idx:
+                current_data = df_full.iloc[curr_idx]
+                
+                m1, m2, m3, m4 = st.columns(4)
+                m1.metric("Live Indoor Temp", f"{current_data['Temperature']:.2f} °C", "+0.1 °C" if curr_idx % 2 == 0 else "-0.1 °C")
+                m2.metric("HVAC Power Draw", f"{current_data['Electricity']/1000:.2f} kW", f"{-abs(current_data['Electricity'] * 0.01 / 1000):.2f} kW")
+                m3.metric("Live Occupancy", f"{142 + (curr_idx % 5) - 2} People")
+                m4.metric("Carbon Emission Rate", f"{(current_data['Electricity'] / 1000 * 0.4):.2f} kgCO2/h")
+                
+                # Show scrolling chart (last 50 points)
+                start_idx = max(0, curr_idx - 50)
+                df_window = df_full.iloc[start_idx:curr_idx+1]
+                
+                fig = live_telemetry_chart(df_window)
+                st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+                
+                # Advance time index
+                if st.session_state.time_index < max_idx - 1:
+                    st.session_state.time_index += 1
+                else:
+                    st.success("Simulation complete. End of dataset reached.")
+                    if st.button("Restart Simulation"):
+                        st.session_state.time_index = 0
+                        st.rerun()
+
+    render_live_telemetry()
 
 with tab2:
     # ---------------------------------------------------
