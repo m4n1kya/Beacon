@@ -47,11 +47,15 @@ def get_metrics():
 
 
 import pandas as pd
+import os
 
 def get_timeseries_data():
-    conn = sqlite3.connect(DB)
+    csv_path = OUTPUTS_DIR / "telemetry_data.csv"
+    if os.path.exists(csv_path):
+        return pd.read_csv(csv_path)
     
-    # Get temperature timeseries
+    # Fallback to sqlite if needed (e.g. locally before extracting)
+    conn = sqlite3.connect(DB)
     temp_df = pd.read_sql_query("""
         SELECT rd.TimeIndex, rd.Value as Temperature 
         FROM ReportData rd 
@@ -60,7 +64,6 @@ def get_timeseries_data():
         ORDER BY rd.TimeIndex
     """, conn)
     
-    # Get electricity timeseries
     elec_df = pd.read_sql_query("""
         SELECT rd.TimeIndex, rd.Value as Electricity 
         FROM ReportData rd 
@@ -68,10 +71,8 @@ def get_timeseries_data():
         WHERE rdd.Name='Electricity:Facility'
         ORDER BY rd.TimeIndex
     """, conn)
-    
     conn.close()
     
-    # Merge on TimeIndex
     df = pd.merge(temp_df, elec_df, on='TimeIndex')
     return df
 
