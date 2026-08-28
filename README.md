@@ -3,11 +3,17 @@
 AI-Powered Building Energy Optimization using EnergyPlus and Large Language Models
 
 <p align="center">
+  <img src="assets/dashboard_preview.png" alt="BEACON Dashboard" width="48%">
+  <img src="assets/telemetry_preview.png" alt="BEACON Live Telemetry" width="48%">
+</p>
 
-AI-Driven Closed-Loop Building Energy Optimization Framework
+<p align="center">
+  <strong>🔥 Live Demo: <a href="https://beacon-fuqtpoomdhrfdzhksccvvu.streamlit.app/">Try BEACON on Streamlit Cloud</a> 🔥</strong>
+</p>
 
-EnergyPlus • Ollama • Qwen2.5 • Python • Streamlit
-
+<p align="center">
+  AI-Driven Closed-Loop Building Energy Optimization Framework<br>
+  EnergyPlus • Ollama • Qwen2.5 • Python • Streamlit
 </p>
 
 ---
