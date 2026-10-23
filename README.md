@@ -13,6 +13,7 @@
   </p>
 
   <p align="center">
+    <a href="https://github.com/m4n1kya/Beacon/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/m4n1kya/Beacon/ci.yml?branch=main&style=for-the-badge&logo=github&label=CI" alt="CI Status" /></a>
     <img src="https://img.shields.io/badge/Python-3.13-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.13" />
     <img src="https://img.shields.io/badge/EnergyPlus-26.1-00A67D?style=for-the-badge" alt="EnergyPlus 26.1" />
     <img src="https://img.shields.io/badge/LLM-Qwen2.5_1.5B-6366F1?style=for-the-badge" alt="Qwen2.5 1.5B" />
@@ -162,6 +163,8 @@ For physical building deployments, BEACON supports ingesting live sensor streams
 
 ```text
 BEACON/
+├── .github/workflows/          # Automated CI/CD pipelines
+│   └── ci.yml                  # Multi-version Python lint and pytest workflow
 ├── assets/                     # UI background textures and platform preview screenshots
 │   ├── bg.jpg                  # Custom hexagon dark-mode background texture
 │   ├── dashboard_preview.png   # 3D Globe & Command Center overview
@@ -191,8 +194,17 @@ BEACON/
 │   ├── report_generator.py     # ReportLab PDF, CSV, and JSON export module
 │   ├── config.py               # Centralized filesystem & binary path configuration
 │   └── run_baseline.py         # Standalone baseline simulation runner
+├── tests/                      # Automated unit and integration test suite
+│   ├── test_ai_agent_parsing.py
+│   ├── test_config.py
+│   ├── test_data_extractor.py
+│   ├── test_idf_controller.py
+│   └── test_report_generator.py
+├── .env.example                # Local environment & path configuration template
 ├── CONTRIBUTING.md             # Contributor workflow and coding standards
 ├── LICENSE                     # MIT License
+├── pyproject.toml              # Build system & project metadata
+├── pytest.ini                  # Pytest test discovery & execution configuration
 ├── README.md                   # Project documentation
 ├── requirements.txt            # Locked Python package dependencies
 └── results.json                # Latest verified closed-loop simulation metrics
@@ -245,6 +257,12 @@ python main.py
 streamlit run src/dashboard.py
 ```
 Access the local web application at `http://localhost:8501`.
+
+### 5. Run the Automated Test Suite
+
+```bash
+pytest -v
+```
 
 ---
 
