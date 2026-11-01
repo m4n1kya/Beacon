@@ -44,12 +44,12 @@ export default function HomePage() {
       <Navbar />
 
       {/* Hero */}
-      <main className="flex-1 flex flex-col items-center justify-center relative overflow-hidden px-6 pt-24 pb-16">
+      <main className="flex-1 flex flex-col items-center justify-center relative overflow-hidden px-6 sm:px-10 lg:px-16 pt-24 pb-16">
         {/* Ambient neon radial glows */}
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] rounded-full bg-[#2196F3]/[0.07] blur-[120px] pointer-events-none" />
         <div className="absolute top-1/2 right-1/4 w-[400px] h-[400px] rounded-full bg-[#00E5FF]/[0.05] blur-[100px] pointer-events-none" />
 
-        <div className="max-w-6xl w-full mx-auto grid lg:grid-cols-2 gap-12 items-center relative z-10">
+        <div className="max-w-7xl w-full mx-auto grid lg:grid-cols-2 gap-10 lg:gap-16 items-center relative z-10">
           {/* Left: text */}
           <div className="space-y-8">
             {/* Heading: BEACON at clean original scale */}
@@ -89,7 +89,7 @@ export default function HomePage() {
             </div>
 
             {/* Stats: Clean 2x2 grid */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3 max-w-md">
               {STATS.map((s) => (
                 <div
                   key={s.label}
@@ -105,8 +105,8 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Right: Globe */}
-          <div className="flex items-center justify-center">
+          {/* Right: Globe shifted to right edge for identical screen margins */}
+          <div className="flex items-center justify-center lg:justify-end">
             <div className="w-[340px] h-[340px] sm:w-[400px] sm:h-[400px] lg:w-[460px] lg:h-[460px]">
               <HeroGlobe className="w-full h-full" />
             </div>

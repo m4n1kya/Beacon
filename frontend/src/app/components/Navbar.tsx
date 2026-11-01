@@ -15,7 +15,7 @@ export default function Navbar() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 lg:px-12 py-3.5 sm:py-4 border-b border-white/[0.06] backdrop-blur-xl bg-[#0a0a0a]/80">
+    <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 sm:px-10 lg:px-16 py-3.5 sm:py-4 border-b border-white/[0.06] backdrop-blur-xl bg-[#0a0a0a]/80">
       {/* Brand */}
       <Link href="/" className="group shrink-0">
         <span className="text-base sm:text-lg font-bold tracking-widest text-[#f1f5f9] hover:text-[#90CAF9] transition-colors">
