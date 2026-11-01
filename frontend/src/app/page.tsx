@@ -38,11 +38,6 @@ const STATS = [
   },
 ];
 
-const TECH = [
-  "EnergyPlus 26.1", "Qwen2.5 1.5B", "Ollama", "Python 3.13",
-  "Next.js 15", "Streamlit", "Pandas", "ReportLab",
-];
-
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-black flex flex-col">
@@ -57,12 +52,6 @@ export default function HomePage() {
         <div className="max-w-6xl w-full mx-auto grid lg:grid-cols-2 gap-12 items-center relative z-10">
           {/* Left: text */}
           <div className="space-y-8">
-            {/* Status badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[rgba(144,202,249,0.08)] border border-[rgba(144,202,249,0.25)] text-xs text-[#90CAF9] shadow-[0_0_15px_rgba(33,150,243,0.15)]">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#00E5FF] animate-pulse shadow-[0_0_8px_#00E5FF]" />
-              AI-Powered Closed-Loop Optimization Active
-            </div>
-
             {/* Heading: BEACON at clean original scale */}
             <div>
               <h1 className="text-6xl lg:text-7xl font-bold tracking-tight mb-4">
@@ -121,21 +110,6 @@ export default function HomePage() {
             <div className="w-[340px] h-[340px] sm:w-[400px] sm:h-[400px] lg:w-[460px] lg:h-[460px]">
               <HeroGlobe className="w-full h-full" />
             </div>
-          </div>
-        </div>
-
-        {/* Tech stack */}
-        <div className="mt-20 max-w-4xl w-full mx-auto relative z-10 px-2">
-          <p className="text-center text-xs text-[#64748b] uppercase tracking-widest mb-6">Powered by</p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            {TECH.map((t) => (
-              <div
-                key={t}
-                className="px-4 py-2 rounded-full glass border border-white/[0.06] text-xs font-medium text-[#94a3b8] hover:text-[#f1f5f9] hover:border-white/15 transition-all cursor-default"
-              >
-                {t}
-              </div>
-            ))}
           </div>
         </div>
       </main>
