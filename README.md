@@ -11,7 +11,7 @@
   <p align="center">
     <a href="https://beacon-fuqtpoomdhrfdzhksccvvu.streamlit.app/"><strong>Explore the Streamlit Demo »</strong></a>
     &nbsp;&bull;&nbsp;
-    <a href="https://github.com/m4n1kya/Beacon/tree/main/frontend"><strong>Production Next.js Web App »</strong></a>
+    <a href="https://beacon-nu-swart.vercel.app"><strong>Production Next.js Web App (Always Online) »</strong></a>
   </p>
 
   <p align="center">
