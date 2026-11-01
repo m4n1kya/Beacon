@@ -79,21 +79,21 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-black flex flex-col">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl mx-auto w-full px-6 pt-28 pb-16 space-y-8">
+      <main className="flex-1 max-w-[1600px] 2xl:max-w-[1800px] mx-auto w-full px-4 sm:px-8 lg:px-12 xl:px-16 pt-24 sm:pt-28 pb-16 space-y-8">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[#f1f5f9] tracking-tight">Historical Optimization Report</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#f1f5f9] tracking-tight">Historical Optimization Report</h1>
             <p className="text-[#64748b] text-sm mt-1">Closed-loop EnergyPlus simulation results with AI-driven HVAC optimization</p>
           </div>
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[rgba(144,202,249,0.08)] border border-[rgba(144,202,249,0.25)] shadow-[0_0_12px_rgba(33,150,243,0.2)]">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[rgba(144,202,249,0.08)] border border-[rgba(144,202,249,0.25)] shadow-[0_0_12px_rgba(33,150,243,0.2)] self-start sm:self-auto">
             <div className="w-1.5 h-1.5 rounded-full bg-[#00E5FF] animate-pulse shadow-[0_0_6px_#00E5FF]" />
             <span className="text-xs font-medium text-[#90CAF9]">Simulation Completed</span>
           </div>
         </div>
 
         {/* KPIs */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <KPICard label="Baseline Energy" value={fmt(RESULTS.baseline.facility_electricity)} accent="white" sub="Facility electricity" delay={0} />
           <KPICard label="Optimized Energy" value={fmt(RESULTS.optimized.facility_electricity)} accent="cyan" sub="Facility electricity" delay={100} />
           <KPICard label="Total Energy Savings" value={`${RESULTS.savings_percent.toFixed(2)}%`} accent="cyan" trend="up" trendValue="3.57%" delay={200} />
@@ -197,11 +197,11 @@ export default function DashboardPage() {
         </div>
 
         {/* Optimization Pipeline */}
-        <div className="glass glass-hover rounded-2xl p-8">
-          <h3 className="text-sm font-semibold text-[#f1f5f9] mb-8 uppercase tracking-widest">
+        <div className="glass glass-hover rounded-2xl p-6 sm:p-8">
+          <h3 className="text-sm font-semibold text-[#f1f5f9] mb-6 sm:mb-8 uppercase tracking-widest">
             Optimization Pipeline
           </h3>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {PIPELINE_STEPS.map((step, i) => (
               <div key={step.num} className="relative flex items-start gap-3">
                 {i < PIPELINE_STEPS.length - 1 && (
