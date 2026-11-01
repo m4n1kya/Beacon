@@ -49,7 +49,7 @@ const PIE_DATA = [
   { name: "Energy Used", value: 96.43 },
   { name: "Energy Saved", value: 3.57 },
 ];
-const PIE_COLORS = ["#18181b", "#10b981"];
+const PIE_COLORS = ["#1a1a1a", "#00E5FF"];
 
 const PIPELINE_STEPS = [
   { num: "01", title: "Simulation", desc: "EnergyPlus baseline execution", icon: Server },
@@ -83,21 +83,21 @@ export default function DashboardPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Historical Optimization Report</h1>
-            <p className="text-zinc-600 text-sm mt-1">Closed-loop EnergyPlus simulation results with AI-driven HVAC optimization</p>
+            <h1 className="text-2xl font-bold text-[#f1f5f9] tracking-tight">Historical Optimization Report</h1>
+            <p className="text-[#64748b] text-sm mt-1">Closed-loop EnergyPlus simulation results with AI-driven HVAC optimization</p>
           </div>
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs font-medium text-emerald-400">Simulation Completed</span>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[rgba(144,202,249,0.08)] border border-[rgba(144,202,249,0.25)] shadow-[0_0_12px_rgba(33,150,243,0.2)]">
+            <div className="w-1.5 h-1.5 rounded-full bg-[#00E5FF] animate-pulse shadow-[0_0_6px_#00E5FF]" />
+            <span className="text-xs font-medium text-[#90CAF9]">Simulation Completed</span>
           </div>
         </div>
 
         {/* KPIs */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <KPICard label="Baseline Energy" value={fmt(RESULTS.baseline.facility_electricity)} sub="Facility electricity" delay={0} />
-          <KPICard label="Optimized Energy" value={fmt(RESULTS.optimized.facility_electricity)} accent="emerald" sub="Facility electricity" delay={100} />
-          <KPICard label="Total Energy Savings" value={`${RESULTS.savings_percent.toFixed(2)}%`} accent="emerald" trend="up" trendValue="3.57%" delay={200} />
-          <KPICard label="Recommended Setpoint" value={`${RESULTS.recommended_temperature}°C`} accent="indigo" sub="HVAC cooling setpoint" delay={300} />
+          <KPICard label="Baseline Energy" value={fmt(RESULTS.baseline.facility_electricity)} accent="white" sub="Facility electricity" delay={0} />
+          <KPICard label="Optimized Energy" value={fmt(RESULTS.optimized.facility_electricity)} accent="cyan" sub="Facility electricity" delay={100} />
+          <KPICard label="Total Energy Savings" value={`${RESULTS.savings_percent.toFixed(2)}%`} accent="cyan" trend="up" trendValue="3.57%" delay={200} />
+          <KPICard label="Recommended Setpoint" value={`${RESULTS.recommended_temperature}°C`} accent="sky" sub="HVAC cooling setpoint" delay={300} />
         </div>
 
         {/* Main charts row */}
@@ -119,7 +119,7 @@ export default function DashboardPage() {
 
           {/* Donut + AI score */}
           <div className="glass glass-hover rounded-2xl p-6 flex flex-col">
-            <h3 className="text-sm font-semibold text-white mb-5 uppercase tracking-widest">
+            <h3 className="text-sm font-semibold text-[#f1f5f9] mb-5 uppercase tracking-widest">
               Energy Distribution
             </h3>
             <div className="flex-1 flex items-center justify-center">
@@ -141,12 +141,12 @@ export default function DashboardPage() {
                     ))}
                   </Pie>
                   <Tooltip
-                    contentStyle={{ background: "#0f0f0f", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, color: "#fff", fontSize: 12 }}
+                    contentStyle={{ background: "#121212", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, color: "#f1f5f9", fontSize: 12 }}
                     formatter={(v: any) => [`${v}%`, ""]}
                   />
                   <Legend
                     iconType="circle"
-                    wrapperStyle={{ fontSize: 11, color: "#71717a" }}
+                    wrapperStyle={{ fontSize: 11, color: "#64748b" }}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -158,14 +158,14 @@ export default function DashboardPage() {
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Building info table */}
           <div className="glass glass-hover rounded-2xl p-6">
-            <h3 className="text-sm font-semibold text-white mb-5 uppercase tracking-widest">
+            <h3 className="text-sm font-semibold text-[#f1f5f9] mb-5 uppercase tracking-widest">
               Building Information
             </h3>
             <div className="space-y-2">
               {BUILDING_INFO.map(([k, v]) => (
                 <div key={k} className="flex items-center justify-between py-2 border-b border-white/[0.04] last:border-0">
-                  <span className="text-xs text-zinc-500">{k}</span>
-                  <span className="text-xs font-medium text-zinc-200 font-mono">{v}</span>
+                  <span className="text-xs text-[#64748b]">{k}</span>
+                  <span className="text-xs font-medium text-[#94a3b8] font-mono">{v}</span>
                 </div>
               ))}
             </div>
@@ -173,23 +173,23 @@ export default function DashboardPage() {
 
           {/* AI Recommendation */}
           <div className="glass glass-hover rounded-2xl p-6">
-            <h3 className="text-sm font-semibold text-white mb-5 uppercase tracking-widest flex items-center gap-2">
-              <Brain className="w-4 h-4 text-indigo-400" />
+            <h3 className="text-sm font-semibold text-[#f1f5f9] mb-5 uppercase tracking-widest flex items-center gap-2">
+              <Brain className="w-4 h-4 text-[#90CAF9]" />
               AI Recommendation
             </h3>
             <div className="grid grid-cols-2 gap-4 mb-5">
               <div className="rounded-xl bg-white/[0.03] border border-white/[0.06] p-4 text-center">
-                <div className="text-[10px] text-zinc-600 uppercase tracking-widest mb-2">Recommended Setpoint</div>
-                <div className="text-3xl font-black font-mono text-indigo-400">25.0°C</div>
+                <div className="text-[10px] text-[#64748b] uppercase tracking-widest mb-2">Recommended Setpoint</div>
+                <div className="text-3xl font-black font-mono text-[#90CAF9] drop-shadow-[0_0_8px_rgba(144,202,249,0.4)]">25.0°C</div>
               </div>
-              <div className="rounded-xl bg-emerald-500/[0.06] border border-emerald-500/20 p-4 text-center">
-                <div className="text-[10px] text-zinc-600 uppercase tracking-widest mb-2">Expected Savings</div>
-                <div className="text-3xl font-black font-mono text-emerald-400">3.57%</div>
+              <div className="rounded-xl bg-[rgba(0,229,255,0.06)] border border-[rgba(0,229,255,0.25)] p-4 text-center shadow-[0_0_15px_rgba(0,229,255,0.15)]">
+                <div className="text-[10px] text-[#64748b] uppercase tracking-widest mb-2">Expected Savings</div>
+                <div className="text-3xl font-black font-mono text-[#00E5FF] drop-shadow-[0_0_10px_rgba(0,229,255,0.6)]">3.57%</div>
               </div>
             </div>
             <div className="rounded-xl bg-white/[0.02] border border-white/[0.06] p-4">
-              <div className="text-[10px] text-zinc-600 uppercase tracking-widest mb-2">Decision Analysis</div>
-              <p className="text-xs text-zinc-400 leading-relaxed">
+              <div className="text-[10px] text-[#64748b] uppercase tracking-widest mb-2">Decision Analysis</div>
+              <p className="text-xs text-[#94a3b8] leading-relaxed">
                 The AI model analyzed baseline EnergyPlus simulation outputs, selected an optimal cooling setpoint of 25.0°C (+1.1°C from baseline), automatically modified the IDF schedule, executed a second verification simulation, and confirmed 3.57% total facility electricity reduction while maintaining occupant thermal comfort standards.
               </p>
             </div>
@@ -198,20 +198,20 @@ export default function DashboardPage() {
 
         {/* Optimization Pipeline */}
         <div className="glass glass-hover rounded-2xl p-8">
-          <h3 className="text-sm font-semibold text-white mb-8 uppercase tracking-widest">
+          <h3 className="text-sm font-semibold text-[#f1f5f9] mb-8 uppercase tracking-widest">
             Optimization Pipeline
           </h3>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {PIPELINE_STEPS.map((step, i) => (
               <div key={step.num} className="relative flex items-start gap-3">
                 {i < PIPELINE_STEPS.length - 1 && (
-                  <ChevronRight className="absolute -right-3 top-3 w-4 h-4 text-zinc-700 hidden lg:block" />
+                  <ChevronRight className="absolute -right-3 top-3 w-4 h-4 text-[#64748b]/40 hidden lg:block" />
                 )}
-                <div className="rounded-xl bg-indigo-500/10 border border-indigo-500/20 p-3 flex-1">
-                  <div className="text-2xl font-black text-indigo-400/60 mb-3">{step.num}</div>
-                  <step.icon className="w-5 h-5 text-indigo-400 mb-2" />
-                  <div className="text-sm font-semibold text-white">{step.title}</div>
-                  <div className="text-xs text-zinc-600 mt-1">{step.desc}</div>
+                <div className="rounded-xl bg-[rgba(33,150,243,0.08)] border border-[rgba(33,150,243,0.25)] p-4 flex-1 hover:border-[rgba(0,229,255,0.4)] transition-colors">
+                  <div className="text-2xl font-black text-[#00E5FF]/70 mb-3">{step.num}</div>
+                  <step.icon className="w-5 h-5 text-[#90CAF9] mb-2" />
+                  <div className="text-sm font-semibold text-[#f1f5f9]">{step.title}</div>
+                  <div className="text-xs text-[#64748b] mt-1">{step.desc}</div>
                 </div>
               </div>
             ))}
@@ -219,18 +219,18 @@ export default function DashboardPage() {
         </div>
 
         {/* Performance summary banner */}
-        <div className="glass rounded-2xl p-6 border border-emerald-500/15">
+        <div className="glass rounded-2xl p-6 border border-[rgba(33,150,243,0.25)] bg-[rgba(33,150,243,0.03)] shadow-[0_0_20px_rgba(33,150,243,0.1)]">
           <div className="flex flex-wrap items-center justify-around gap-6 text-center">
             {[
-              { label: "Baseline Facility Electricity", value: "377.65 GJ", color: "text-zinc-300" },
-              { label: "Optimized Facility Electricity", value: "364.16 GJ", color: "text-emerald-400" },
-              { label: "Total Reduction", value: "−13.49 GJ", color: "text-emerald-400" },
-              { label: "Savings Percentage", value: "3.57%", color: "text-emerald-400" },
-              { label: "Cooling Setpoint Change", value: "23.9°C → 25.0°C", color: "text-indigo-400" },
+              { label: "Baseline Facility Electricity", value: "377.65 GJ", color: "text-[#94a3b8]" },
+              { label: "Optimized Facility Electricity", value: "364.16 GJ", color: "text-[#00E5FF] drop-shadow-[0_0_8px_rgba(0,229,255,0.4)]" },
+              { label: "Total Reduction", value: "−13.49 GJ", color: "text-[#00E5FF] drop-shadow-[0_0_8px_rgba(0,229,255,0.4)]" },
+              { label: "Savings Percentage", value: "3.57%", color: "text-[#00E5FF] drop-shadow-[0_0_8px_rgba(0,229,255,0.4)]" },
+              { label: "Cooling Setpoint Change", value: "23.9°C → 25.0°C", color: "text-[#90CAF9]" },
             ].map((item) => (
               <div key={item.label}>
                 <div className={`text-xl font-bold font-mono ${item.color}`}>{item.value}</div>
-                <div className="text-xs text-zinc-600 mt-1">{item.label}</div>
+                <div className="text-xs text-[#64748b] mt-1">{item.label}</div>
               </div>
             ))}
           </div>

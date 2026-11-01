@@ -10,7 +10,7 @@ interface KPICardProps {
   sub?: string;
   trend?: "up" | "down" | "neutral";
   trendValue?: string;
-  accent?: "emerald" | "indigo" | "amber" | "red" | "white";
+  accent?: "sky" | "blue" | "cyan" | "ice" | "white";
   delay?: number;
 }
 
@@ -31,16 +31,16 @@ export default function KPICard({
   }, [delay]);
 
   const accentColors: Record<string, string> = {
-    emerald: "text-emerald-400",
-    indigo: "text-indigo-400",
-    amber: "text-amber-400",
-    red: "text-red-400",
-    white: "text-white",
+    sky: "text-[#90CAF9] drop-shadow-[0_0_8px_rgba(144,202,249,0.4)]",
+    blue: "text-[#2196F3] drop-shadow-[0_0_10px_rgba(33,150,243,0.5)]",
+    cyan: "text-[#00E5FF] drop-shadow-[0_0_10px_rgba(0,229,255,0.5)]",
+    ice: "text-[#E3F2FD]",
+    white: "text-[#f1f5f9]",
   };
 
   const TrendIcon = trend === "up" ? TrendingUp : trend === "down" ? TrendingDown : Minus;
   const trendColor =
-    trend === "up" ? "text-emerald-400" : trend === "down" ? "text-red-400" : "text-zinc-500";
+    trend === "up" ? "text-[#00E5FF]" : trend === "down" ? "text-[#f87171]" : "text-[#64748b]";
 
   return (
     <div
@@ -50,7 +50,7 @@ export default function KPICard({
       )}
       style={{ transitionDelay: `${delay}ms` }}
     >
-      <div className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-3">{label}</div>
+      <div className="text-xs font-medium text-[#64748b] uppercase tracking-widest mb-3">{label}</div>
       <div className={clsx("text-2xl font-bold font-mono tracking-tight", accentColors[accent])}>
         {value}
       </div>
@@ -62,7 +62,7 @@ export default function KPICard({
               {trendValue}
             </div>
           )}
-          {sub && <span className="text-xs text-zinc-600">{sub}</span>}
+          {sub && <span className="text-xs text-[#64748b]">{sub}</span>}
         </div>
       )}
     </div>

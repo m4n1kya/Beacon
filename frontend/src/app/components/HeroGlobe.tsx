@@ -31,12 +31,12 @@ export default function HeroGlobe({ className }: HeroGlobeProps) {
       phi: 0,
       theta: 0.3,
       dark: 1,
-      diffuse: 1.2,
-      mapSamples: 20000,
-      mapBrightness: 5,
-      baseColor: [0.05, 0.05, 0.08],
-      markerColor: [0.067, 0.725, 0.506],  // emerald
-      glowColor: [0.067, 0.725, 0.506],
+      diffuse: 1.3,
+      mapSamples: 22000,
+      mapBrightness: 6,
+      baseColor: [0.04, 0.04, 0.06],
+      markerColor: [0.13, 0.59, 0.95], // #2196F3 Vibrant Neon Blue
+      glowColor: [0.13, 0.59, 0.95],
       markers: [
         { location: [28.6139, 77.2090], size: 0.07 },   // New Delhi
         { location: [51.5074, -0.1278], size: 0.05 },   // London
@@ -68,10 +68,10 @@ export default function HeroGlobe({ className }: HeroGlobeProps) {
 
   return (
     <div className={`relative ${className}`}>
-      {/* Outer glow ring */}
-      <div className="absolute inset-0 rounded-full bg-emerald-500/5 blur-3xl scale-90" />
-      {/* Inner glow */}
-      <div className="absolute inset-4 rounded-full bg-emerald-500/[0.03] blur-2xl" />
+      {/* Outer neon cyan/blue halo ring */}
+      <div className="absolute inset-0 rounded-full bg-[#2196F3]/15 blur-3xl scale-95 pointer-events-none" />
+      {/* Inner electric glow */}
+      <div className="absolute inset-4 rounded-full bg-[#00E5FF]/10 blur-2xl pointer-events-none" />
       <canvas
         ref={canvasRef}
         className="w-full h-full"

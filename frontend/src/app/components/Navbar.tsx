@@ -15,15 +15,15 @@ export default function Navbar() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 border-b border-white/[0.06] backdrop-blur-xl bg-black/60">
-      {/* Logo: clean BEACON text */}
+    <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 border-b border-white/[0.06] backdrop-blur-xl bg-[#0a0a0a]/80">
+      {/* Logo: clean minimalist BEACON text */}
       <Link href="/" className="group">
-        <span className="text-base font-bold tracking-widest text-white hover:text-emerald-400 transition-colors">
+        <span className="text-base font-bold tracking-widest text-[#f1f5f9] hover:text-[#90CAF9] transition-colors">
           BEACON
         </span>
       </Link>
 
-      {/* Center nav */}
+      {/* Center nav pill */}
       <div className="flex items-center gap-1 p-1 rounded-full bg-white/[0.03] border border-white/[0.06]">
         {navLinks.map(({ href, label, icon: Icon }) => (
           <Link
@@ -32,8 +32,8 @@ export default function Navbar() {
             className={clsx(
               "flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200",
               pathname === href
-                ? "bg-white/10 text-white"
-                : "text-zinc-400 hover:text-white hover:bg-white/05"
+                ? "bg-white text-[#0f172a] shadow-[0_0_15px_rgba(255,255,255,0.25)] font-semibold"
+                : "text-[#94a3b8] hover:text-[#f1f5f9] hover:bg-white/[0.05]"
             )}
           >
             <Icon className="w-3.5 h-3.5" />
@@ -44,11 +44,11 @@ export default function Navbar() {
 
       {/* Right side status */}
       <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-xs font-medium text-emerald-400">System Online</span>
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[rgba(144,202,249,0.08)] border border-[rgba(144,202,249,0.25)] shadow-[0_0_12px_rgba(33,150,243,0.15)]">
+          <div className="w-1.5 h-1.5 rounded-full bg-[#00E5FF] animate-pulse shadow-[0_0_6px_#00E5FF]" />
+          <span className="text-xs font-medium text-[#90CAF9]">System Online</span>
         </div>
-        <div className="text-xs text-zinc-600 font-mono">v2.0.0</div>
+        <div className="text-xs text-[#64748b] font-mono">v2.0.0</div>
       </div>
     </nav>
   );

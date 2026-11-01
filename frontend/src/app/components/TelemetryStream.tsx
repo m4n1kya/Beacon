@@ -31,13 +31,13 @@ const FULL_DATA = [
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="glass rounded-xl p-3 text-sm border border-white/10">
-        <p className="text-zinc-400 mb-2 font-medium">{label}</p>
+      <div className="glass rounded-xl p-3 text-sm border border-white/10 shadow-[0_0_20px_rgba(33,150,243,0.25)]">
+        <p className="text-[#94a3b8] mb-2 font-medium">{label}</p>
         {payload.map((p: any) => (
           <div key={p.name} className="flex items-center gap-2 mb-1">
             <div className="w-2 h-2 rounded-full" style={{ background: p.color }} />
-            <span className="text-zinc-400">{p.name}:</span>
-            <span className="text-white font-mono">{p.value}</span>
+            <span className="text-[#94a3b8]">{p.name}:</span>
+            <span className="text-[#f1f5f9] font-mono">{p.value}</span>
           </div>
         ))}
       </div>
@@ -99,30 +99,34 @@ export default function TelemetryStream() {
             value: `${current.temperature.toFixed(2)} °C`,
             delta: `${Number(tempDiff) >= 0 ? "+" : ""}${tempDiff} °C`,
             up: Number(tempDiff) >= 0,
+            valColor: "text-[#90CAF9]",
           },
           {
             label: "HVAC Power Draw",
             value: formatElec(current.electricity),
             delta: `${Number(elecDiff) >= 0 ? "+" : ""}${elecDiff} MW`,
             up: Number(elecDiff) >= 0,
+            valColor: "text-[#00E5FF] drop-shadow-[0_0_8px_rgba(0,229,255,0.4)]",
           },
           {
             label: "Live Occupancy",
             value: `${Math.floor(120 + current.temperature * 1.5)} People`,
             delta: step > 1 ? "+3 people" : "—",
             up: true,
+            valColor: "text-[#E3F2FD]",
           },
           {
             label: "Carbon Rate",
             value: `${(current.electricity * 0.0004).toFixed(0)} kgCO₂/h`,
             delta: `Step ${step} / ${FULL_DATA.length}`,
             up: false,
+            valColor: "text-[#2196F3]",
           },
         ].map((kpi) => (
           <div key={kpi.label} className="glass glass-hover rounded-2xl p-5">
-            <div className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">{kpi.label}</div>
-            <div className="text-xl font-bold font-mono text-white truncate">{kpi.value}</div>
-            <div className={`text-xs mt-2 font-medium ${kpi.up ? "text-emerald-400" : "text-red-400"}`}>
+            <div className="text-xs font-medium text-[#64748b] uppercase tracking-widest mb-2">{kpi.label}</div>
+            <div className={`text-xl font-bold font-mono truncate ${kpi.valColor}`}>{kpi.value}</div>
+            <div className={`text-xs mt-2 font-medium ${kpi.up ? "text-[#00E5FF]" : "text-[#f87171]"}`}>
               {kpi.up ? "▲" : "▼"} {kpi.delta}
             </div>
           </div>
@@ -133,21 +137,21 @@ export default function TelemetryStream() {
       <div className="glass glass-hover rounded-2xl p-6">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-sm font-semibold text-white uppercase tracking-widest">
+            <h3 className="text-sm font-semibold text-[#f1f5f9] uppercase tracking-widest">
               Real-Time Building Telemetry
             </h3>
-            <p className="text-xs text-zinc-600 mt-1">Monthly EnergyPlus simulation — streaming live</p>
+            <p className="text-xs text-[#64748b] mt-1">Monthly EnergyPlus simulation — streaming live</p>
           </div>
           <div className="flex items-center gap-3">
             {!done ? (
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-xs text-emerald-400 font-medium">Streaming</span>
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[rgba(33,150,243,0.08)] border border-[rgba(33,150,243,0.25)] shadow-[0_0_12px_rgba(33,150,243,0.2)]">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#00E5FF] animate-pulse shadow-[0_0_6px_#00E5FF]" />
+                <span className="text-xs text-[#90CAF9] font-medium">Streaming</span>
               </div>
             ) : (
               <button
                 onClick={restart}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-full glass glass-hover text-xs text-zinc-400 hover:text-white transition-all"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full glass glass-hover text-xs text-[#94a3b8] hover:text-[#f1f5f9] transition-all"
               >
                 <RefreshCw className="w-3 h-3" />
                 Restart
@@ -160,26 +164,26 @@ export default function TelemetryStream() {
           <AreaChart data={displayData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
             <defs>
               <linearGradient id="telElec" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                <stop offset="5%" stopColor="#00E5FF" stopOpacity={0.35} />
+                <stop offset="95%" stopColor="#00E5FF" stopOpacity={0} />
               </linearGradient>
               <linearGradient id="telTemp" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#6366f1" stopOpacity={0.25} />
-                <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                <stop offset="5%" stopColor="#2196F3" stopOpacity={0.25} />
+                <stop offset="95%" stopColor="#2196F3" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-            <XAxis dataKey="month" tick={{ fill: "#71717a", fontSize: 11 }} axisLine={false} tickLine={false} />
-            <YAxis tick={{ fill: "#71717a", fontSize: 10 }} axisLine={false} tickLine={false} />
+            <XAxis dataKey="month" tick={{ fill: "#64748b", fontSize: 11 }} axisLine={false} tickLine={false} />
+            <YAxis tick={{ fill: "#64748b", fontSize: 10 }} axisLine={false} tickLine={false} />
             <Tooltip content={<CustomTooltip />} />
-            <Legend wrapperStyle={{ fontSize: 11, color: "#71717a", paddingTop: 12 }} />
-            <Area type="monotone" dataKey="electricity" name="HVAC Power (W)" stroke="#10b981" strokeWidth={2} fill="url(#telElec)" dot={false} isAnimationActive={false} />
-            <Area type="monotone" dataKey="temperature" name="Temperature (°C)" stroke="#6366f1" strokeWidth={2} fill="url(#telTemp)" dot={false} isAnimationActive={false} />
+            <Legend wrapperStyle={{ fontSize: 11, color: "#64748b", paddingTop: 12 }} />
+            <Area type="monotone" dataKey="electricity" name="HVAC Power (W)" stroke="#00E5FF" strokeWidth={2} fill="url(#telElec)" dot={false} isAnimationActive={false} />
+            <Area type="monotone" dataKey="temperature" name="Temperature (°C)" stroke="#2196F3" strokeWidth={2} fill="url(#telTemp)" dot={false} isAnimationActive={false} />
           </AreaChart>
         </ResponsiveContainer>
 
         {done && (
-          <div className="mt-4 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-sm text-emerald-400 text-center">
+          <div className="mt-4 px-4 py-3 rounded-xl bg-[rgba(33,150,243,0.08)] border border-[rgba(33,150,243,0.25)] text-sm text-[#90CAF9] text-center shadow-[0_0_15px_rgba(33,150,243,0.15)]">
             Simulation complete — full annual dataset rendered.
           </div>
         )}
