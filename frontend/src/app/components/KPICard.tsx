@@ -40,7 +40,7 @@ export default function KPICard({
 
   const TrendIcon = trend === "up" ? TrendingUp : trend === "down" ? TrendingDown : Minus;
   const trendColor =
-    trend === "up" ? "text-[#00E5FF]" : trend === "down" ? "text-[#f87171]" : "text-[#64748b]";
+    trend === "up" ? "text-emerald-400" : trend === "down" ? "text-rose-400" : "text-[#64748b]";
 
   return (
     <div

@@ -79,7 +79,7 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-black flex flex-col">
       <Navbar />
 
-      <main className="flex-1 max-w-[1600px] 2xl:max-w-[1800px] mx-auto w-full px-4 sm:px-8 lg:px-12 xl:px-16 pt-24 sm:pt-28 pb-16 space-y-8">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-6 pt-28 pb-16 space-y-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>

@@ -92,13 +92,14 @@ export default function TelemetryStream() {
   return (
     <div className="space-y-6">
       {/* KPIs */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           {
             label: "Live Indoor Temp",
             value: `${current.temperature.toFixed(2)} °C`,
             delta: `${Number(tempDiff) >= 0 ? "+" : ""}${tempDiff} °C`,
             up: Number(tempDiff) >= 0,
+            showTrend: true,
             valColor: "text-[#90CAF9]",
           },
           {
@@ -106,6 +107,7 @@ export default function TelemetryStream() {
             value: formatElec(current.electricity),
             delta: `${Number(elecDiff) >= 0 ? "+" : ""}${elecDiff} MW`,
             up: Number(elecDiff) >= 0,
+            showTrend: true,
             valColor: "text-[#00E5FF] drop-shadow-[0_0_8px_rgba(0,229,255,0.4)]",
           },
           {
@@ -113,6 +115,7 @@ export default function TelemetryStream() {
             value: `${Math.floor(120 + current.temperature * 1.5)} People`,
             delta: step > 1 ? "+3 people" : "—",
             up: true,
+            showTrend: true,
             valColor: "text-[#E3F2FD]",
           },
           {
@@ -120,15 +123,22 @@ export default function TelemetryStream() {
             value: `${(current.electricity * 0.0004).toFixed(0)} kgCO₂/h`,
             delta: `Step ${step} / ${FULL_DATA.length}`,
             up: false,
+            showTrend: false,
             valColor: "text-[#2196F3]",
           },
         ].map((kpi) => (
           <div key={kpi.label} className="glass glass-hover rounded-2xl p-5">
             <div className="text-xs font-medium text-[#64748b] uppercase tracking-widest mb-2">{kpi.label}</div>
             <div className={`text-xl font-bold font-mono truncate ${kpi.valColor}`}>{kpi.value}</div>
-            <div className={`text-xs mt-2 font-medium ${kpi.up ? "text-[#00E5FF]" : "text-[#f87171]"}`}>
-              {kpi.up ? "▲" : "▼"} {kpi.delta}
-            </div>
+            {kpi.showTrend ? (
+              <div className={`text-xs mt-2 font-medium ${kpi.up ? "text-emerald-400" : "text-rose-400"}`}>
+                {kpi.up ? "▲" : "▼"} {kpi.delta}
+              </div>
+            ) : (
+              <div className="text-xs mt-2 font-medium text-[#64748b]">
+                {kpi.delta}
+              </div>
+            )}
           </div>
         ))}
       </div>
