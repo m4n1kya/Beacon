@@ -4,7 +4,6 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { ArrowRight, Github, Zap, Thermometer, Activity, Cpu } from "lucide-react";
 import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
 
 const HeroGlobe = dynamic(() => import("./components/HeroGlobe"), { ssr: false });
 
@@ -140,8 +139,6 @@ export default function HomePage() {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }
