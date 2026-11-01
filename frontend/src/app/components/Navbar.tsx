@@ -42,14 +42,8 @@ export default function Navbar() {
         ))}
       </div>
 
-      {/* Right side status - responsive: icon on mobile, full on desktop */}
-      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-        <div className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-full bg-[rgba(144,202,249,0.08)] border border-[rgba(144,202,249,0.25)] shadow-[0_0_12px_rgba(33,150,243,0.15)]">
-          <div className="w-1.5 h-1.5 rounded-full bg-[#00E5FF] animate-pulse shadow-[0_0_6px_#00E5FF]" />
-          <span className="hidden sm:inline text-xs font-medium text-[#90CAF9]">System Online</span>
-        </div>
-        <div className="hidden md:block text-xs text-[#64748b] font-mono">v2.0.0</div>
-      </div>
+      {/* Right spacer for symmetrical centering */}
+      <div className="shrink-0 w-16 hidden sm:block pointer-events-none" />
     </nav>
   );
 }
