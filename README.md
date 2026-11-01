@@ -9,17 +9,20 @@
   <p align="center"><em>AI-Powered Closed-Loop Building Energy Optimization & Real-Time Telemetry Platform</em></p>
 
   <p align="center">
-    <a href="https://beacon-fuqtpoomdhrfdzhksccvvu.streamlit.app/"><strong>Explore the Live Platform »</strong></a>
+    <a href="https://beacon-fuqtpoomdhrfdzhksccvvu.streamlit.app/"><strong>Explore the Streamlit Demo »</strong></a>
+    &nbsp;&bull;&nbsp;
+    <a href="https://github.com/m4n1kya/Beacon/tree/main/frontend"><strong>Production Next.js Web App »</strong></a>
   </p>
 
   <p align="center">
     <a href="https://github.com/m4n1kya/Beacon/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/m4n1kya/Beacon/ci.yml?branch=main&style=for-the-badge&logo=github&label=CI" alt="CI Status" /></a>
+    <img src="https://img.shields.io/badge/Next.js-15-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js 15" />
+    <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React 19" />
+    <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
     <img src="https://img.shields.io/badge/Python-3.13-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.13" />
     <img src="https://img.shields.io/badge/EnergyPlus-26.1-00A67D?style=for-the-badge" alt="EnergyPlus 26.1" />
     <img src="https://img.shields.io/badge/LLM-Qwen2.5_1.5B-6366F1?style=for-the-badge" alt="Qwen2.5 1.5B" />
-    <img src="https://img.shields.io/badge/Inference-Ollama-000000?style=for-the-badge" alt="Ollama" />
     <img src="https://img.shields.io/badge/Streamlit-1.60-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Streamlit" />
-    <img src="https://img.shields.io/badge/Plotly-3D_Analytics-3F4F75?style=for-the-badge&logo=plotly&logoColor=white" alt="Plotly" />
     <img src="https://img.shields.io/badge/License-MIT-F59E0B?style=for-the-badge" alt="License: MIT" />
   </p>
 </div>
@@ -253,10 +256,24 @@ python main.py
 
 ### 4. Launch the Real-Time Command Center
 
+**Option A — Python Streamlit Dashboard:**
 ```bash
 streamlit run src/dashboard.py
 ```
-Access the local web application at `http://localhost:8501`.
+Access at `http://localhost:8501`.
+
+**Option B — Production Next.js 15 Web App (Always Online, Zero Sleep):**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+Access the modern dark glassmorphic web app at `http://localhost:3000`.
+
+To deploy to **Vercel** with global Edge routing and zero sleep timeouts:
+1. Connect the repository at [vercel.com](https://vercel.com).
+2. Set **Root Directory** to `frontend`.
+3. Deploy — instant sub-second edge responses with embedded telemetry.
 
 ### 5. Run the Automated Test Suite
 

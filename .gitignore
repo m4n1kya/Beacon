@@ -28,10 +28,10 @@ outputs/*
 
 # Legacy local artifacts
 architecture.png
-presentation/
-screenshots/
-demo/
-dashboard/
+/presentation/
+/screenshots/
+/demo/
+/dashboard/
 
 # Logs
 *.log

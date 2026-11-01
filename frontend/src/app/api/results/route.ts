@@ -1,0 +1,25 @@
+import { NextResponse } from "next/server";
+
+const results = {
+  project: "BEACON",
+  baseline: {
+    outdoor_temperature: 25.578812785388127,
+    building_electricity: 257872140000.0,
+    facility_electricity: 377653423039.6244,
+  },
+  optimized: {
+    outdoor_temperature: 25.578812785388127,
+    building_electricity: 257872140000.0,
+    facility_electricity: 364161184778.8737,
+  },
+  savings_percent: 3.57265085859821,
+  recommended_temperature: 25.0,
+};
+
+export async function GET() {
+  return NextResponse.json(results, {
+    headers: {
+      "Cache-Control": "s-maxage=3600, stale-while-revalidate",
+    },
+  });
+}
