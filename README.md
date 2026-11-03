@@ -12,6 +12,8 @@
     <a href="https://beacon-fuqtpoomdhrfdzhksccvvu.streamlit.app/"><strong>Explore the Streamlit Demo »</strong></a>
     &nbsp;&bull;&nbsp;
     <a href="https://beacon-nu-swart.vercel.app"><strong>Production Next.js Web App (Always Online) »</strong></a>
+    &nbsp;&bull;&nbsp;
+    <a href="docs/API_SPECIFICATION.md"><strong>Edge API Specification »</strong></a>
   </p>
 
   <p align="center">
