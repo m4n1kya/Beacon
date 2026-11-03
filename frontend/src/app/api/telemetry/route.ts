@@ -17,10 +17,98 @@ const telemetryData = [
   { timeIndex: 8760, month: "Dec", temperature: 12.875,  electricity: 12920485765.294 },
 ];
 
-export async function GET() {
-  return NextResponse.json(telemetryData, {
-    headers: {
-      "Cache-Control": "s-maxage=3600, stale-while-revalidate",
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const month = searchParams.get("month");
+  const limit = searchParams.get("limit");
+
+  let data = telemetryData;
+  if (month) {
+    data = data.filter((d) => d.month.toLowerCase() === month.toLowerCase());
+  }
+  if (limit) {
+    const numLimit = parseInt(limit, 10);
+    if (!isNaN(numLimit) && numLimit > 0) {
+      data = data.slice(0, numLimit);
+    }
+  }
+
+  return NextResponse.json(
+    {
+      source: "BEACON EnergyPlus Engine",
+      count: data.length,
+      data,
     },
-  });
+    {
+      headers: {
+        "Cache-Control": "s-maxage=3600, stale-while-revalidate",
+        "Content-Type": "application/json",
+      },
+    }
+  );
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const { sensor_id, metrics, timestamp } = body ?? {};
+
+    if (!sensor_id || typeof sensor_id !== "string") {
+      return NextResponse.json(
+        { error: "Validation failed: 'sensor_id' is required and must be a string." },
+        { status: 400 }
+      );
+    }
+
+    if (!metrics || typeof metrics !== "object") {
+      return NextResponse.json(
+        { error: "Validation failed: 'metrics' object is required." },
+        { status: 400 }
+      );
+    }
+
+    const temp = Number(metrics.temperature_c ?? metrics.temperature);
+    const power = Number(metrics.hvac_power_w ?? metrics.electricity);
+
+    if (isNaN(temp) || isNaN(power)) {
+      return NextResponse.json(
+        { error: "Validation failed: 'temperature_c' and 'hvac_power_w' must be valid numbers." },
+        { status: 400 }
+      );
+    }
+
+    // BEACON calculations: Carbon emission coefficient ~0.0004 kgCO2/Wh
+    const carbonKgPerHour = (power * 0.0004).toFixed(3);
+    const optimalSetpoint = 25.0;
+    const tempDelta = Number((temp - optimalSetpoint).toFixed(2));
+    const requiresAction = temp > 26.0 || temp < 20.0;
+
+    return NextResponse.json(
+      {
+        status: "acknowledged",
+        sensor_id,
+        timestamp: timestamp || new Date().toISOString(),
+        telemetry: {
+          temperature_c: temp,
+          hvac_power_w: power,
+          occupancy_count: metrics.occupancy_count ?? null,
+        },
+        analytics: {
+          carbon_emission_kg_per_h: parseFloat(carbonKgPerHour),
+          target_setpoint_c: optimalSetpoint,
+          setpoint_delta_c: tempDelta,
+          anomaly_flag: requiresAction,
+          recommendation: requiresAction
+            ? "Zone deviation detected: trigger EnergyPlus adaptive setpoint schedule."
+            : "Nominal thermal equilibrium maintained.",
+        },
+      },
+      { status: 201 }
+    );
+  } catch {
+    return NextResponse.json(
+      { error: "Invalid JSON payload in request body." },
+      { status: 400 }
+    );
+  }
 }
